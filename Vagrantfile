@@ -6,7 +6,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/precise64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -61,10 +61,23 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
+
+    # Install PostgreSQL database
     sudo apt-get install -y postgresql postgresql-contrib
+
+    # Install Bower front-end package manager
+    curl -sL https://deb.nodesource.com/setup | sudo bash -
+    sudo apt-get install -y nodejs
+    sudo apt-get install git
+    sudo npm install -g bower
+
+    # Install Python 2.7
     sudo apt-get install -y python
     sudo apt-get install -y python-pip
+    sudo pip install --upgrade distribute
+    sudo pip install setuptools==7.0
+
+    # Install project requirements
     sudo pip install -r /vagrant/requirements.txt
   SHELL
-
 end

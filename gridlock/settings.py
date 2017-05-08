@@ -15,6 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -23,8 +24,17 @@ STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),  # For static assets not tied to a particular app
-    os.path.join(BASE_DIR, 'preprocessor', 'static')  # Static assets for the preprocessor app
+    os.path.join(BASE_DIR, 'preprocessor', 'static'),  # Static assets for the preprocessor app
 )
+
+STATICFILES_FINDERS = [
+    # Default finders
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
+    # Finder for django-bower
+    'djangobower.finders.BowerFinder',
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -47,8 +57,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Vendor apps
+    'djangobower',
+
+    # Project apps
     'preprocessor.apps.PreprocessorConfig',
 ]
+
+BOWER_INSTALLED_APPS = (
+    'jquery'
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
