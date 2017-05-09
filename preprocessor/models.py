@@ -2,5 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from djgeojson.fields import GeometryCollectionField
 
-# Create your models here.
+
+class Location(models.Model):
+    name = models.CharField(max_length=250)
+    geojson = GeometryCollectionField()
