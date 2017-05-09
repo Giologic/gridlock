@@ -1,18 +1,13 @@
 {% load static %}
+{% load leaflet_tags %}
 
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Index</title>
-    <script type="text/javascript" src="{% static 'jquery/dist/jquery.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-           alert("Hello World!");
-        });
-    </script>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="stylesheet" href="{% static 'preprocessor/scss/map.css' %}">
 </head>
 <body>
-<h1>Hello World!</h1>
+    {% leaflet_map "leaflet-map" %}
 </body>
 </html>

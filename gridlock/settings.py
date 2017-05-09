@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 
     # Vendor apps
     'djangobower',
+    'leaflet',
 
     # Project apps
     'preprocessor.apps.PreprocessorConfig',

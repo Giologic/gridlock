@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Gridlock Demo{% endblock %}
 {% block extrastyle %}
     <link rel="stylesheet" href="{% static 'scss/demo.css' %}">
 {% endblock %}
@@ -9,6 +10,8 @@
     {% include 'navbar.html' %}
     <div id="main-content-row" class="row">
         <div class="large-3 columns full-height" style="background-color:#8BD6EE;">Large 4</div>
-        <div class="large-9 columns full-height" style="background-color:#FF6347;">Large 4</div>
+        <div class="large-9 columns full-height no-padding" style="background-color:#FF6347;">
+            {% include 'preprocessor/map.html' %}
+        </div>
     </div>
 {% endblock %}
