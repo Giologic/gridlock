@@ -2,10 +2,10 @@
 
 from django.conf.urls import url
 from django.contrib import admin
+from django.views.generic import TemplateView
 
-from preprocessor.views import index
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^example/', index),
+    url(r'^$', TemplateView.as_view(template_name='demo.html')),
 ]

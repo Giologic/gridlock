@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,cAAe;EACb,KAAK,EAAE,IAAI",
+"sources": ["sticky-topbar.scss"],
+"names": [],
+"file": "sticky-topbar.css"
+}

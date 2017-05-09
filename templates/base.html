@@ -1,11 +1,20 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
-    {% block extrahead %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'foundation/scss/normalize.css' %}"/>
+    <link rel="stylesheet" href="{% static 'foundation/scss/foundation.css' %}"/>
+    {% block extrastyle %} {% endblock %}
+
+    <script type="text/javascript" src="{% static 'jquery/dist/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'foundation/js/foundation.js' %}"></script>
+    {% block extrascript %}{% endblock %}
 </head>
 <body>
-
+{% block body %}{% endblock %}
 </body>
 </html>
