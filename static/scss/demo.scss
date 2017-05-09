@@ -1,3 +1,29 @@
-.row {
-    max-width: 100%;
+html {
+    box-sizing: border-box;
+    height: 100%;
+
+    * {
+        box-sizing: inherit;
+    }
+
+    body {
+        $navbar-height: 45px;
+        $content-height: calc(100% - 45px);
+
+        nav {
+            min-height: $navbar-height;
+            max-height: $navbar-height;
+        }
+
+        #main-content-row {
+            height: $content-height;
+            max-width: 100%;
+
+            .full-height {
+                min-height: 100%;
+            }
+        }
+    }
+
 }
+

@@ -1,4 +1,15 @@
-.row {
-  max-width: 100%; }
+html {
+  box-sizing: border-box;
+  height: 100%; }
+  html * {
+    box-sizing: inherit; }
+  html body nav {
+    min-height: 45px;
+    max-height: 45px; }
+  html body #main-content-row {
+    height: calc(100% - 45px);
+    max-width: 100%; }
+    html body #main-content-row .full-height {
+      min-height: 100%; }
 
 /*# sourceMappingURL=demo.css.map */
