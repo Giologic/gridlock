@@ -1,4 +1,5 @@
 {% load static %}
+{% load js_reverse %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,12 +7,21 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'foundation/scss/normalize.css' %}"/>
-    <link rel="stylesheet" href="{% static 'foundation/scss/foundation.css' %}"/>
+    <!-- Zurb Foundation styles -->
+    <link rel="stylesheet" href="{% static 'foundation/css/normalize.css' %}"/>
+    <link rel="stylesheet" href="{% static 'foundation/css/foundation.css' %}"/>
+    <!-- Extra styles -->
     {% block extrastyle %} {% endblock %}
 
+    <!-- JQuery scripts -->
     <script type="text/javascript" src="{% static 'jquery/dist/jquery.js' %}"></script>
+    <!-- Zurb Foundation scripts-->
     <script type="text/javascript" src="{% static 'foundation/js/foundation.js' %}"></script>
+    <!-- django-js-reverse scripts -->
+    <script type="text/javascript" charset="utf-8">
+        {% js_reverse_inline %}
+    </script>
+    <!-- Extra scripts -->
     {% block extrascript %}{% endblock %}
 </head>
 <body>

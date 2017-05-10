@@ -1,16 +1,15 @@
+{% load static %}
+
 <html>
-<head></head>
+<head>
+    <script type="text/javascript" src="{% static 'preprocessor/js/preprocessor.js' %}"></script>
+</head>
 <body>
 <div class="row">
     <div class="large-12 columns">
         <h6>Preprocessor</h6>
         <label>Location
-            <select>
-                <option value="manila">Manila</option>
-                <option value="makati">Makati</option>
-                <option value="paranaque">Paranaque</option>
-                <option value="quezon">Quezon</option>
-            </select>
+            <select id="location-selection"></select>
         </label>
     </div>
 </div>

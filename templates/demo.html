@@ -5,6 +5,9 @@
 {% block extrastyle %}
     <link rel="stylesheet" href="{% static 'scss/demo.css' %}">
 {% endblock %}
+{% block extrascript %}
+    <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
+{% endblock %}
 
 {% block body %}
     {% include 'navbar.html' %}
