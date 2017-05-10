@@ -7,4 +7,4 @@ from .models import Location
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'path']

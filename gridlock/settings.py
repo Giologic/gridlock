@@ -15,6 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+DATA_FILES_ROOT = os.path.join(PROJECT_ROOT, 'datafiles')
 BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'components')
 
 # Static files (CSS, JavaScript, Images)
@@ -60,7 +61,7 @@ INSTALLED_APPS = [
 
     # Vendor apps
     'djangobower',
-    'djgeojson',
+    'django_js_reverse',
     'leaflet',
 
     # Project apps
