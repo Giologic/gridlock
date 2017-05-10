@@ -60,9 +60,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Vendor apps
+    'annoying',
     'djangobower',
     'django_js_reverse',
     'leaflet',
+    'pygeoj',
 
     # Project apps
     'preprocessor.apps.PreprocessorConfig',
