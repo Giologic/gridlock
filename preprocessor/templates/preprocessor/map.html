@@ -1,17 +1,15 @@
 {% load static %}
 {% load leaflet_tags %}
 
+<!--suppress JSUnusedLocalSymbols -->
 <html>
 <head>
     <!-- Leaflet -->
     {% leaflet_css %}
     {% leaflet_js %}
-
     <!-- Preprocessor -->
     <link rel="stylesheet" href="{% static 'preprocessor/scss/map.css' %}">
     <script type="text/javascript" src="{% static 'preprocessor/js/preprocessor.js' %}"></script>
-
-    <!--suppress JSUnusedLocalSymbols -->
     <script type="text/javascript">
         var leafletMap; // Global variable where the Leaflet map instance will be stored
         function leafletMapInit(map) {
