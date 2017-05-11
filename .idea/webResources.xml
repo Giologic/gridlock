@@ -9,6 +9,7 @@
             <path value="file://$PROJECT_DIR$/preprocessor/static" />
             <path value="file://$PROJECT_DIR$/gridlock/components" />
             <path value="file://$PROJECT_DIR$/gridlock/datafiles" />
+            <path value="file://$PROJECT_DIR$/stopgenerator/static" />
           </resourceRoots>
         </entryData>
       </entry>

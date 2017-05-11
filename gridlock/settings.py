@@ -26,6 +26,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),  # For static assets not tied to a particular app
     os.path.join(BASE_DIR, 'preprocessor', 'static'),  # Static assets for the preprocessor app
+    os.path.join(BASE_DIR, 'stopgenerator', 'static'),  # Static assets for the stopgenerator app
 )
 
 STATICFILES_FINDERS = [
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
 
     # Project apps
     'preprocessor.apps.PreprocessorConfig',
+    'stopgenerator.apps.StopgeneratorConfig'
 ]
 
 BOWER_INSTALLED_APPS = (
@@ -90,7 +92,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),  # For templates not tied to a particular app
-            os.path.join(BASE_DIR, 'preprocessor', 'templates')  # Static assets for the preprocessor app
+            os.path.join(BASE_DIR, 'preprocessor', 'templates'),  # Templates for the preprocessor app
+            os.path.join(BASE_DIR, 'stopgenerator', 'templates'),  # Templates for the stopgenerator app
         ],
         'APP_DIRS': True,
         'OPTIONS': {

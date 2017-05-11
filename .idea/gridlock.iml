@@ -27,6 +27,7 @@
       <list>
         <option value="$MODULE_DIR$/templates" />
         <option value="$MODULE_DIR$/preprocessor/templates" />
+        <option value="$MODULE_DIR$/stopgenerator/templates" />
       </list>
     </option>
   </component>
