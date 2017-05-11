@@ -7,7 +7,6 @@
         <option name="settingsModule" value="gridlock/settings.py" />
         <option name="manageScript" value="manage.py" />
         <option name="environment" value="&lt;map/&gt;" />
-        <option name="commandsToSkip" value="" />
       </configuration>
     </facet>
   </component>
@@ -18,7 +17,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/.vagrant" />
     </content>
-    <orderEntry type="jdk" jdkName="Remote Python 2.7.3 Vagrant VM at C:\Users\Gio\Documents\GitHub\gridlock (/usr/bin/python)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Remote Python 2.7.3 Vagrant VM at ~/PycharmProjects/gridlock (/usr/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">

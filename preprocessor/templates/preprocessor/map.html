@@ -3,11 +3,22 @@
 
 <html>
 <head>
-    {% leaflet_js %}
+    <!-- Leaflet -->
     {% leaflet_css %}
+    {% leaflet_js %}
+
+    <!-- Preprocessor -->
     <link rel="stylesheet" href="{% static 'preprocessor/scss/map.css' %}">
-</head>
+    <script type="text/javascript" src="{% static 'preprocessor/js/preprocessor.js' %}"></script>
+
+    <!--suppress JSUnusedLocalSymbols -->
+    <script type="text/javascript">
+        var leafletMap; // Global variable where the Leaflet map instance will be stored
+        function leafletMapInit(map) {
+            leafletMap = map;
+        }
+    </script>
 <body>
-    {% leaflet_map "leaflet-map" %}
+    {% leaflet_map "leaflet-map" callback="leafletMapInit"%}
 </body>
 </html>

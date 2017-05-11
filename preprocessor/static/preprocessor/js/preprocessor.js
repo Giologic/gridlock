@@ -1,7 +1,10 @@
+var LOCATION_LAYER_STYLE = {
+    color: '#000000'
+};
+
 $(document).ready(function() {
     console.log("preprocessor.js: document is ready");
 
-    var leafletMap = $('#leaflet-map');
     var locationSelection = $('#location-selection');
     displayLocationChoices(leafletMap, locationSelection);
 });
@@ -30,13 +33,23 @@ function addLocationAsOption(locationSelection, location) {
 
 function displayLocationGeometry(leafletMap, locationPk) {
     getLocationGeometry(locationPk, function(locationGeometry) {
-       console.log(locationGeometry);
-       // TODO: Implement displaying of location geometry
+        var locationLayer = L.geoJson(locationGeometry);
+        locationLayer.setStyle(LOCATION_LAYER_STYLE);
+        locationLayer.addTo(leafletMap);
+        restrictToLayer(leafletMap, locationLayer);
     });
 }
 
+function restrictToLayer(leafletMap, layer) {
+    leafletMap.fitBounds(layer.getBounds());
+    leafletMap.setMaxBounds(layer.getBounds());
+    leafletMap.options.minZoom = leafletMap.getZoom();
+
+    console.log("preprocessor.js:restrictToLayer: Done");
+}
+
 function getLocationGeometry(locationPk, callback) {
-     $.get(Urls['preprocessor:location_geometry'](), {'location_pk': locationPk}, function(returnedData) {
-         callback(JSON.parse(returnedData['location_geometry']));
-     });
+    $.get(Urls['preprocessor:location_geometry'](), {'location_pk': locationPk}, function(returnedData) {
+        callback(JSON.parse(returnedData['location_geometry']));
+    });
 }
