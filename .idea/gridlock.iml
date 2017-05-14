@@ -16,7 +16,6 @@
       <sourceFolder url="file://$MODULE_DIR$/preprocessor" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/stopgenerator" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/.vagrant" />
     </content>
     <orderEntry type="jdk" jdkName="Remote Python 2.7.3 Vagrant VM at ~/PycharmProjects/gridlock (/usr/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

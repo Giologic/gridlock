@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='demo.html'), name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^preprocessor/', include('preprocessor.urls')),
+    url(r'^stopgenerator/', include('stopgenerator.urls')),
 ]

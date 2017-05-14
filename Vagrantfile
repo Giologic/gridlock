@@ -74,6 +74,7 @@ Vagrant.configure("2") do |config|
     # Install Python 2.7
     sudo apt-get install -y python
     sudo apt-get install -y python-pip
+    sudo apt-get install -y python-dev
     sudo pip install --upgrade distribute
     sudo pip install setuptools==7.0
 

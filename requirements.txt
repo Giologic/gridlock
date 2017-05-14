@@ -26,6 +26,7 @@ chardet==2.0.1
 cloud-init==0.6.3
 command-not-found==0.2.44
 configobj==4.7.2
+decorator==4.0.11
 ## FIXME: could not find svn URL in dependency_links for this package:
 distribute==0.6.24dev-r0
 django-annoying==0.10.3
@@ -41,6 +42,8 @@ language-selector==0.1
 launchpadlib==1.9.12
 lazr.restfulclient==0.12.0
 lazr.uri==1.0.3
+networkx==1.11
+numpy==1.13.0rc1
 oauth==1.0.1
 packaging==16.8
 paramiko==1.7.7.1

@@ -1,15 +1,10 @@
-var LOCATION_GEOM_LAYER_STYLE = {
-    color: '#000000'
-};
+var locationGeometryLayer; // Global variable where the location geometry layer instance will be stored
 
-// Global variable where the location geometry layer instance will be stored
-var locationGeometryLayer;
-
-$(document).ready(function() {
+$(document).ready(function () {
     console.log("preprocessor.js: document is ready");
 
     var locationSelection = $('#location-selection');
-    locationSelection.change(function() {
+    locationSelection.change(function () {
         console.log("preprocessor.js: location selection changed");
         displayLocationGeometry(leafletMap, locationSelection.val());
     });
@@ -18,17 +13,18 @@ $(document).ready(function() {
 });
 
 function displayLocationChoices(leafletMap, locationSelection) {
-    getLocations(function(locationList) {
+    getLocations(function (locationList) {
         locationSelection.empty();
-        locationList.forEach(function(location){
+        locationList.forEach(function (location){
            addLocationAsOption(locationSelection, location);
         });
         displayLocationGeometry(leafletMap, locationSelection.val());
+        console.log("preprocessor.js:displayLocationChoices: location choices display in select");
     });
 }
 
 function getLocations(callback) {
-    $.get(Urls['preprocessor:location_list'](), function(returnedData) {
+    $.get(Urls['preprocessor:location_list'](), function (returnedData) {
         callback(JSON.parse(returnedData['location_list']));
     });
 }
@@ -40,7 +36,7 @@ function addLocationAsOption(locationSelection, location) {
 }
 
 function displayLocationGeometry(leafletMap, locationPk) {
-    getLocationGeometry(locationPk, function(locationGeometry) {
+    getLocationGeometry(locationPk, function (locationGeometry) {
         //noinspection EqualityComparisonWithCoercionJS
         if (locationGeometryLayer != null) {
             leafletMap.removeLayer(locationGeometryLayer);
@@ -49,19 +45,20 @@ function displayLocationGeometry(leafletMap, locationPk) {
         locationGeometryLayer = L.geoJson(locationGeometry);
         locationGeometryLayer.setStyle(LOCATION_GEOM_LAYER_STYLE);
         locationGeometryLayer.addTo(leafletMap);
+        console.log("preprocessor.js:displayLocationGeometry: location geometry displayed on map");
+
         restrictToLayer(leafletMap, locationGeometryLayer);
+    });
+}
+
+function getLocationGeometry(locationPk, callback) {
+    $.get(Urls['preprocessor:location_geometry'](), {'location_pk': locationPk}, function (returnedData) {
+        callback(JSON.parse(returnedData['location_geometry']));
     });
 }
 
 function restrictToLayer(leafletMap, layer) {
     leafletMap.fitBounds(layer.getBounds());
     leafletMap.setMaxBounds(layer.getBounds());
-
-    console.log("preprocessor.js:restrictToLayer: done");
-}
-
-function getLocationGeometry(locationPk, callback) {
-    $.get(Urls['preprocessor:location_geometry'](), {'location_pk': locationPk}, function(returnedData) {
-        callback(JSON.parse(returnedData['location_geometry']));
-    });
+    console.log("preprocessor.js:restrictToLayer: map display restricted to layer");
 }
