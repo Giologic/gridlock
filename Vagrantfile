@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
     # Install Bower front-end package manager
     curl -sL https://deb.nodesource.com/setup | sudo bash -
     sudo apt-get install -y nodejs
-    sudo apt-get install git
+    sudo apt-get install -y git
     sudo npm install -g bower
 
     # Install Python 2.7

@@ -1,0 +1,54 @@
+{
+  "name": "leaflet-dialog",
+  "description": "Resizable, movable dialog window for Leaflet",
+  "version": "1.0.2",
+  "main": [
+    "Leaflet.Dialog.js",
+    "Leaflet.Dialog.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "src",
+    "*.md",
+    "Gruntfile.js",
+    "package.json",
+    "bower.json"
+  ],
+  "keywords": [
+    "javascript",
+    "leaflet",
+    "dialog",
+    "ui",
+    "popup",
+    "modal",
+    "window"
+  ],
+  "authors": [
+    {
+      "name": "Nate Marquardt"
+    }
+  ],
+  "homepage": "https://github.com/NBTSolutions/Leaflet.Dialog",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NBTSolutions/Leaflet.Dialog.git"
+  },
+  "dependencies": {
+    "leaflet-dist": "0.7.x",
+    "fontawesome": "~4.5.0"
+  },
+  "devDependencies": {
+    "leaflet": "~0.7.0",
+    "jshint": "~2.3.0"
+  },
+  "_release": "1.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.2",
+    "commit": "4b59718ff994eef3786bac428836267393244bbf"
+  },
+  "_source": "https://github.com/NBTSolutions/Leaflet.Dialog.git",
+  "_target": "^1.0.2",
+  "_originalSource": "Leaflet.Dialog",
+  "_direct": true
+}

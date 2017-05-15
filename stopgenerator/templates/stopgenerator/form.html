@@ -1,20 +1,61 @@
+<!--suppress JSUnusedLocalSymbols -->
+<script type="text/javascript">
+    var stopLayoutDialogSettings = [
+        {
+            "name": "Lattice",
+            "content": "{% filter escapejs %}{% include 'stopgenerator/lattice_layout_dialog.html' %}{% endfilter %}",
+            "options": {
+                "size": [500, 290],
+                "anchor": [150, 225],
+                "maxSize": [450, 295]
+            }
+        },
+        {
+            "name": "Random",
+            "content": "{% filter escapejs %}{% include 'stopgenerator/random_layout_dialog.html' %}{% endfilter %}",
+            "options": {
+                "size": [500, 290],
+                "anchor": [150, 225],
+                "maxSize": [450, 295]
+            }
+        },
+        {
+            "name": "N-Blob",
+            "content": "{% filter escapejs %}{% include 'stopgenerator/nblob_layout_dialog.html' %}{% endfilter %}",
+            "options": {
+                "size": [500, 450],
+                "anchor": [75, 225],
+                "maxSize": [450, 295]
+            }
+        }
+    ];
+</script>
+
+<div class="row">
+    <div class="large-12 column">
+        <h6>Stop Generator</h6>
+        <label>Current Number of Stops
+            <div class="panel callout">
+                <h5 style="text-align: center">500</h5>
+            </div>
+        </label>
+        <ul class="button-group">
+            <li><a href="#" class="button small">Add</a></li>
+            <li><a href="#" class="button small">Remove</a></li>
+            <li><a href="#" class="alert button small">Clear All</a></li>
+        </ul>
+    </div>
+</div>
+
 <div class="row">
     <div class="large-12 columns">
-        <h6>Stop Generator</h6>
-        <label>Stop Layout
+        <label>Generate Stops Using Layout
             <select id="stop-layout">
                 <option value="1">Lattice</option>
                 <option value="2">Random</option>
                 <option value="3">N-Blob</option>
             </select>
         </label>
-        <label>Maximum Number of Stops
-            <input type="text" value="20">
-        </label>
-        <label>Maximum Walking Distance
-            <input type="text" value="350">
-        </label>
-        <a class="button tiny" id="generate-stop-layout-btn" href="#">Generate Stop Layout</a>
-        <a class="alert button tiny" id="clear-stops-btn" href="#">Clear Stops</a>
+        <a class="button small full-width" id="generate-stop-layout-btn" href="#">Generate</a>
     </div>
 </div>

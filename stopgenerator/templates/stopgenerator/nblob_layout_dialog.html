@@ -1,0 +1,18 @@
+{% extends 'stopgenerator/base_layout_dialog.html' %}
+{% block title %}N-Blob Layout Configuration{% endblock %}
+{% block extrafieldrows %}
+    <div class="row">
+        <div class="large-12 columns">
+            <label>Predefined Means
+                <textarea placeholder="Ano ulit format nito?"></textarea>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            <label>Covariance Coefficient
+                <input type="number" />
+            </label>
+        </div>
+    </div>
+{% endblock %}

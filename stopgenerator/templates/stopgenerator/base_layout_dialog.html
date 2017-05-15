@@ -1,0 +1,24 @@
+<form>
+    <h5>{% block title %}{% endblock %}</h5>
+    <div class="row">
+        <div class="large-6 columns">
+            <label>Maximum Number of Stops
+                <input type="number" value="20" />
+            </label>
+        </div>
+        <div class="large-6 columns">
+            <label>Maximum Walking Distance
+                <input type="number" value="350" />
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            <label>Stop Color
+                <input type="color" value="#ff9900"/>
+            </label>
+        </div>
+    </div>
+    {% block extrafieldrows %}{% endblock %}
+    <a href="#" class="success button small full-width">Go</a>
+</form>
