@@ -1,3 +1,5 @@
+var activeDialog;
+
 $(document).ready(function () {
     console.log("stopgenerator.js: document is ready");
 
@@ -13,10 +15,13 @@ $(document).ready(function () {
 });
 
 function showStopLayoutDialog(settings, confirmCallback, cancelCallback) {
-    var dialog = L.control.dialog(settings["options"])
-                  .setContent(settings["content"])
-                  .addTo(leafletMap);
-    dialog.open();
+    //noinspection EqualityComparisonWithCoercionJS
+    if (activeDialog != null) {
+        activeDialog.remove(leafletMap);
+    }
+
+    activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
+    activeDialog.open();
 }
 
 function generateStops(callback) {
