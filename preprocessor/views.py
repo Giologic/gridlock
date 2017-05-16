@@ -2,16 +2,14 @@
 from __future__ import unicode_literals
 
 import json
-import os
 
 from django.core import serializers
 from django.http import JsonResponse
 
 from annoying.functions import get_object_or_None
-from pygeoj import load
 
-from gridlock.settings import DATA_FILES_ROOT
 from .models import Location
+from .utils import get_location_geometry
 
 
 def location_list(request):
@@ -24,7 +22,6 @@ def location_geometry(request):
     if request.method == 'GET':
         location_pk = request.GET['location_pk']
         location = get_object_or_None(Location, pk=location_pk)
-
-        location_file = open(os.path.join(DATA_FILES_ROOT, location.path))
-        location_json = json.load(location_file)
-        return JsonResponse({'location_geometry': json.dumps(location_json)})
+        return JsonResponse({
+            'location_geometry': json.dumps(get_location_geometry(location))
+        })

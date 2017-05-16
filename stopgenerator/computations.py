@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import, division
+from __future__ import unicode_literals, division
 
 import math
+from vtown.geo.polygon import Polygon
+
+
+def convert_point_to_coordinate(point):
+    return point.x, point.y
 
 
 def convert_coordinates_to_nodes(coordinates):
@@ -40,7 +45,10 @@ class LatticeLayout(StopLayout):
 
 
 class RandomLayout(StopLayout):
-    pass
+    def generate(self):
+        polygon = Polygon(*self.layout_coord['geometries'][0]['coordinates'][0][0])
+        coordinates = [convert_point_to_coordinate(polygon.random_point()) for _ in range(self.max_num_nodes)]
+        return convert_coordinates_to_nodes(coordinates)
 
 
 class NBlobLayout(StopLayout):
@@ -52,4 +60,3 @@ class NBlobLayout(StopLayout):
 
     def generate(self):
         pass
-
