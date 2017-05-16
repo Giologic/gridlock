@@ -2,6 +2,8 @@
 from __future__ import unicode_literals, division
 
 import math
+import numpy as np
+import operator as op
 
 from vtown.geo.polygon import Polygon
 from .utils import convert_point_to_coordinate, convert_coordinates_to_nodes, get_location_bounds
@@ -44,12 +46,21 @@ class RandomLayout(StopLayout):
 
 
 class NBlobLayout(StopLayout):
-    pass
-    # def __init__(self, max_num_nodes, max_walking_dist,
-    #              layout_coord, predefined_means, covariance_coefficient):
-    #     super(NBlobLayout, self).__init__(max_num_nodes, float(max_walking_dist / 111111), layout_coord)
-    #     self.predefined_means = predefined_means
-    #     self.covariance_coefficient = covariance_coefficient
-    #
-    # def generate(self):
-    #     pass
+    def __init__(self, max_num_nodes, max_walking_dist, predefined_means, covariance_coefficient):
+        super(NBlobLayout, self).__init__(max_num_nodes, max_walking_dist)
+        self.predefined_means = predefined_means
+        self.covariance_coefficient = covariance_coefficient
+
+    def generate(self):
+        diagonal_covariance = (self.covariance_coefficient / 1111111, -20 / 1111111)
+        spherical_covariance = (-20 / 1111111, self.covariance_coefficient / 1111111)
+        covariances = (diagonal_covariance, spherical_covariance)
+
+        size = op.floordiv(self.max_num_nodes, len(self.predefined_means))
+
+        coordinates = []
+        for means in self.predefined_means:
+            random_samples = np.random.multivariate_normal(means, covariances, size).T
+            coordinates.extend(zip(random_samples[0], random_samples[1]))
+
+        return convert_coordinates_to_nodes(coordinates)
