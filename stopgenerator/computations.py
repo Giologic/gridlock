@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import, division
 
 import math
 
 
 def convert_coordinates_to_nodes(coordinates):
-    return [i for i in range(0, len(coordinates))]
+    return [Node(i, coordinates[i]) for i in range(0, len(coordinates))]
 
 
 class Node(object):
     def __init__(self, node_id, coordinates):
         self.node_id = node_id
         self.coordinates = coordinates
+
+    def __str__(self):
+        return "Node #" + str(self.node_id) + " - " + str(self.coordinates)
 
 
 class StopLayout(object):
@@ -37,8 +40,7 @@ class LatticeLayout(StopLayout):
 
 
 class RandomLayout(StopLayout):
-    def generate(self):
-        pass
+    pass
 
 
 class NBlobLayout(StopLayout):
