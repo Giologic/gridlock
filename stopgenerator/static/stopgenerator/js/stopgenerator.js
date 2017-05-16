@@ -40,9 +40,8 @@ function displayStopNodes(stopNodes) {
 
     stopNodes.forEach(function(node) {
         var coord = node['coordinates'];
-        console.log(coord);
         var latLng = L.latLng(coord[1], coord[0]);
-        var stopNodeMarker = L.circleMarker(latLng);
+        var stopNodeMarker = L.circleMarker(latLng, STOP_NODE_STYLE);
         stopsLayer.addLayer(stopNodeMarker);
 
     });

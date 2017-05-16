@@ -43,7 +43,7 @@ function displayLocationGeometry(leafletMap, locationPk) {
         }
 
         locationGeometryLayer = L.geoJson(locationGeometry);
-        locationGeometryLayer.setStyle(LOCATION_GEOM_LAYER_STYLE);
+        locationGeometryLayer.setStyle(LOCATION_BOUNDARY_STYLE);
         locationGeometryLayer.addTo(leafletMap);
         console.log("preprocessor.js:displayLocationGeometry: location geometry displayed on map");
 

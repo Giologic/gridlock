@@ -19,7 +19,7 @@ def generate_stop_layout(request):
         # location_geometry = get_location_geometry(location)
         # stop_layout_nodes = RandomLayout(20, 350, location_geometry).generate()
 
-        stop_layout_nodes = NBlobLayout(20, 350, [(120.9670, 14.5855), (120.9660, 14.5900)], 65).generate()
-        for n in stop_layout_nodes:
-            print(n)
+        # stop_layout_nodes = NBlobLayout(20, 350, [(120.9670, 14.5855), (120.9660, 14.5900)], 65).generate()
+        stop_layout_nodes = NBlobLayout(100, 350, [(120.9747, 14.6184), (121.0007, 14.5796)], 65).generate()
+
         return JsonResponse({'stop_layout_nodes': [n.__dict__ for n in stop_layout_nodes]})
