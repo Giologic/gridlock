@@ -3,10 +3,9 @@ from __future__ import unicode_literals
 
 import json
 
+from annoying.functions import get_object_or_None
 from django.core import serializers
 from django.http import JsonResponse
-
-from annoying.functions import get_object_or_None
 
 from .models import Location
 from .utils import get_location_geometry

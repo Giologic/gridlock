@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from annoying.functions import get_object_or_None
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from annoying.functions import get_object_or_None
-
-from .computations import LatticeLayout, RandomLayout, NBlobLayout
 from preprocessor.models import Location
 from preprocessor.utils import get_location_geometry
+from .computations import LatticeLayout, RandomLayout, NBlobLayout
 
 
 @csrf_exempt
