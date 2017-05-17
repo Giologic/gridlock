@@ -12,7 +12,14 @@ body {
   body #main-container {
     flex: 1 1 auto; }
     body #main-container form {
-      padding: 10px; }
+      padding-top: 10px;
+      padding-left: 10px;
+      padding-right: 10px; }
+      body #main-container form legend {
+        font-size: large;
+        color: #777777; }
+      body #main-container form .field {
+        margin-bottom: 10px; }
       body #main-container form .pure-button {
         margin-bottom: 5px; }
       body #main-container form .info-panel {

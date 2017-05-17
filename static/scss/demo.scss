@@ -17,7 +17,18 @@ body {
         flex: 1 1 auto;
 
         form {
-            padding: 10px;
+          padding-top: 10px;
+          padding-left: 10px;
+          padding-right: 10px;
+
+          legend {
+            font-size: large;
+            color: #777777;
+          }
+
+          .field {
+            margin-bottom: 10px;
+          }
 
           .pure-button {
             margin-bottom: 5px;
