@@ -22,49 +22,8 @@ body {
         margin-bottom: 10px; }
       body #main-container form .pure-button {
         margin-bottom: 5px; }
-      body #main-container form .info-panel {
-        background: skyblue; }
 
 .full-width {
   width: 100%; }
-
-.button-xsmall {
-  font-size: 70%; }
-
-.button-small {
-  font-size: 85%; }
-
-.button-large {
-  font-size: 110%; }
-
-.button-xlarge {
-  font-size: 125%; }
-
-.button-success,
-.button-error,
-.button-warning,
-.button-secondary {
-  color: white;
-  border-radius: 4px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); }
-
-.button-success {
-  background: #1cb841;
-  /* this is a green */ }
-
-.button-error {
-  background: #ca3c3c;
-  /* this is a maroon */ }
-
-.button-warning {
-  background: #df7514;
-  /* this is an orange */ }
-
-.button-secondary {
-  background: #42b8dd;
-  /* this is a light blue */ }
-
-.center-text {
-  text-align: center; }
 
 /*# sourceMappingURL=demo.css.map */
