@@ -11,30 +11,29 @@
     <!-- JQuery -->
     <script type="text/javascript" src="{% static 'jquery/dist/jquery.js' %}"></script>
 
-    <!-- Zurb Foundation-->
-    <link rel="stylesheet" href="{% static 'foundation/css/normalize.css' %}"/>
-    <link rel="stylesheet" href="{% static 'foundation/css/foundation.css' %}"/>
-    <script type="text/javascript" src="{% static 'foundation/js/foundation.js' %}"></script>
-    <script type="text/javascript" src="{% static 'foundation/js/foundation/foundation.dropdown.js' %}"></script>
+    {# Zurb Foundation #}
+{#    <link rel="stylesheet" href="{% static 'foundation/css/normalize.css' %}"/>#}
+{#    <link rel="stylesheet" href="{% static 'foundation/css/foundation.css' %}"/>#}
+{#    <script type="text/javascript" src="{% static 'foundation/js/foundation.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'foundation/js/foundation/foundation.dropdown.js' %}"></script>#}
 
     <!-- Django JS Reverse -->
-    <script type="text/javascript" charset="utf-8">
-        {% js_reverse_inline %}
-    </script>
+    <script type="text/javascript" charset="utf-8">{% js_reverse_inline %}</script>
 
     <!-- Leaflet -->
     {% leaflet_css %}
     {% leaflet_js %}
 
     <!-- Leaflet Dialog -->
-    <link rel="stylesheet" href="{% static 'fontawesome/css/font-awesome.css' %}" />
-    <link rel="stylesheet" href="{% static 'leaflet-dialog/Leaflet.Dialog.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/css/font-awesome.css' %}"/>
+    <link rel="stylesheet" href="{% static 'leaflet-dialog/Leaflet.Dialog.css' %}"/>
     <script type="text/javascript" src="{% static 'leaflet-dialog/Leaflet.Dialog.js' %}"></script>
 
-    <!-- Extra styles -->
-    {% block extrastyle %} {% endblock %}
-    <!-- Extra scripts -->
-    {% block extrascript %}{% endblock %}
+    <!-- Pure CSS -->
+    <link rel="stylesheet" href="{% static 'pure/pure.css' %}"/>
+
+    <!-- Extra head for child templates -->
+    {% block extrahead %} {% endblock %}
 </head>
 <body>
 {% block body %}{% endblock %}

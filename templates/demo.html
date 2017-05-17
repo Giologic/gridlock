@@ -1,26 +1,25 @@
 {% extends 'base.html' %}
+
 {% load static %}
 
 {% block title %}Gridlock Demo{% endblock %}
-{% block extrastyle %}
+
+{% block extrahead %}
     <link rel="stylesheet" href="{% static 'scss/demo.css' %}">
-{% endblock %}
-{% block extrascript %}
+    <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
     <script type="text/javascript" src="{% static 'preprocessor/js/preprocessor.js' %}"></script>
     <script type="text/javascript" src="{% static 'stopgenerator/js/stopgenerator.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
 {% endblock %}
 
 {% block body %}
     {% include 'navbar.html' %}
-    <div id="main-content-row" class="row">
-        <!--  Sidebar forms column -->
-        <div class="large-3 columns full-height">
+    <div class="pure-g" id="main-container">
+        <!-- Sidebar -->
+        <div class="pure-u-1-4 full-height" id="sidebar-col">
             {% include 'sidebar.html' %}
         </div>
-
-        <!-- Leaflet map column -->
-        <div class="large-9 columns full-height no-padding">
+        <!-- Map -->
+        <div class="pure-u-3-4 full-height" id="map-col">
             {% include 'preprocessor/map.html' %}
         </div>
     </div>

@@ -3,7 +3,7 @@ var activeDialog;
 $(document).ready(function () {
     console.log("stopgenerator.js: document is ready");
 
-    $("#generate-stop-layout-btn").click(function () {
+    $("#generate-stop-layout-button").click(function () {
         console.log("stopgenerator.js: generate-stop-layout-btn clicked");
         // var settings = stopLayoutDialogSettings[$('#stop-layout').val() - 1];
         // showStopLayoutDialog(settings);
@@ -12,7 +12,7 @@ $(document).ready(function () {
         });
     });
 
-    $("#clear-stops-btn").click(function () {
+    $("#clear-stops-button").click(function () {
         console.log("stopgenerator.js: clear-stops-btn cˆlicked");
     });
 });
