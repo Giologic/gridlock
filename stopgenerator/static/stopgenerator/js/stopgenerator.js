@@ -5,11 +5,8 @@ $(document).ready(function () {
 
     $("#generate-stop-layout-button").click(function () {
         console.log("stopgenerator.js: generate-stop-layout-btn clicked");
-        // var settings = stopLayoutDialogSettings[$('#stop-layout').val() - 1];
-        // showStopLayoutDialog(settings);
-        generateStops(function () {
-
-        });
+        var settings = stopLayoutDialogSettings[$('#stop-layout-selection').val() - 1];
+        showStopLayoutDialog(settings);
     });
 
     $("#clear-stops-button").click(function () {
