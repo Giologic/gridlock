@@ -10,7 +10,7 @@ $(document).ready(function () {
     });
 
     $("#clear-stops-button").click(function () {
-        console.log("stopgenerator.js: clear-stops-btn cˆlicked");
+        console.log("stopgenerator.js: clear-stops-btn clicked");
     });
 });
 

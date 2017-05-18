@@ -1,42 +1,73 @@
 html, body {
-    height: 100%;
-    margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+
+  * {
+    box-sizing: inherit;
+  }
 }
 
 body {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
+  display: flex;
+  flex-flow: column;
+  height: 100%;
 
-    .pure-menu {
-        border: 1px solid grey;
-        flex : 0 1 auto;
+  .pure-menu {
+    border: 1px solid grey;
+    flex : 0 1 auto;
+  }
+
+  #main-container {
+    flex: 1 1 auto;
+
+    form {
+      padding-top: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+
+      legend {
+        font-size: large;
+        color: #777777;
+      }
+
+      .field {
+        margin-bottom: 10px;
+      }
+
+      .pure-button {
+        margin-bottom: 5px;
+      }
     }
+  }
+}
 
-    #main-container {
-        flex: 1 1 auto;
+.button-xsmall {
+  font-size: 70%;
+}
 
-        form {
-          padding-top: 10px;
-          padding-left: 10px;
-          padding-right: 10px;
+.button-small {
+  font-size: 85%;
+}
 
-          legend {
-            font-size: large;
-            color: #777777;
-          }
+.button-large {
+  font-size: 110%;
+}
 
-          .field {
-            margin-bottom: 10px;
-          }
-
-          .pure-button {
-            margin-bottom: 5px;
-          }
-        }
-    }
+.button-xlarge {
+  font-size: 125%;
 }
 
 .full-width {
   width: 100%;
+}
+
+.full-width-margin-right {
+  width: 98%;
+  margin-right: 2px;
+}
+
+.full-width-margin-left {
+  width: 98%;
+  margin-left: 2px;
 }

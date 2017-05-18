@@ -1,6 +1,9 @@
 html, body {
+  box-sizing: border-box;
   height: 100%;
   margin: 0; }
+  html *, body * {
+    box-sizing: inherit; }
 
 body {
   display: flex;
@@ -23,7 +26,27 @@ body {
       body #main-container form .pure-button {
         margin-bottom: 5px; }
 
+.button-xsmall {
+  font-size: 70%; }
+
+.button-small {
+  font-size: 85%; }
+
+.button-large {
+  font-size: 110%; }
+
+.button-xlarge {
+  font-size: 125%; }
+
 .full-width {
   width: 100%; }
+
+.full-width-margin-right {
+  width: 98%;
+  margin-right: 2px; }
+
+.full-width-margin-left {
+  width: 98%;
+  margin-left: 2px; }
 
 /*# sourceMappingURL=demo.css.map */
