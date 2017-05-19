@@ -3,16 +3,16 @@
 {% block extrafields %}
     <div class="pure-g">
         <div class="pure-u-1-2">
-            <label for="max-num-stops-field">Lattice Start Latitude</label>
-            <input class="pure-u-23-24" id="max-num-stops-field" type="number" disabled/>
+            <label for="lattice-start-lat-field">Lattice Start Latitude</label>
+            <input class="pure-u-23-24" id="lattice-start-lat-field" type="number" disabled/>
         </div>
         <div class="pure-u-1-2">
-            <label for="max-walking-dist-field">Lattice Start Longitude</label>
-            <input class="pure-u-23-24" id="max-walking-dist-field" type="number" disabled/>
+            <label for="lattice-start-lng-field">Lattice Start Longitude</label>
+            <input class="pure-u-23-24" id="lattice-start-lng-field" type="number" disabled/>
         </div>
     </div>
-    <label for="terms" class="pure-checkbox">
+    <label for="loc-center-lattice-start-checkbox" class="pure-checkbox">
         <input id="loc-center-lattice-start-checkbox" type="checkbox" checked>
-        Use latitude and longitude of computed center of location bounds
+        Use the latitude and longitude of computed center of location bounds
     </label>
 {% endblock %}

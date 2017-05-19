@@ -42,6 +42,12 @@ function showStopLayoutDialog(settings) {
     activeDialog.layoutType = settings["name"];
     activeDialog.open();
 
+
+    setupDialogGenerateButton();
+    setupDialogCheckboxes();
+}
+
+function setupDialogGenerateButton() {
     $("#generate-stop-layout-dialog-button").click(function () {
         activeDialog.close();
 
@@ -58,6 +64,21 @@ function showStopLayoutDialog(settings) {
 
         generateStops(layoutConfig, displayStopNodes);
     });
+}
+
+function setupDialogCheckboxes() {
+    if (activeDialog.layoutType === "LATTICE") {
+        var locCenterLatticeStartCheckbox = $('#loc-center-lattice-start-checkbox');
+        locCenterLatticeStartCheckbox.change(function () {
+            $('#lattice-start-lat-field').attr('disabled', locCenterLatticeStartCheckbox.is(':checked'));
+            $('#lattice-start-lng-field').attr('disabled', locCenterLatticeStartCheckbox.is(':checked'));
+        });
+    } else if (activeDialog.layoutType === "N-BLOB") {
+        var recommendedPredefinedMeansCheckbox = $('#recommended-predefined-means-checkbox');
+        recommendedPredefinedMeansCheckbox.change(function() {
+            $('#predefined-means-field').attr('disabled', recommendedPredefinedMeansCheckbox.is(':checked'));
+        });
+    }
 }
 
 function setupLayoutBaseConfig(layoutConfig) {
@@ -91,7 +112,15 @@ function setupRandomLayoutConfig(layoutConfig) {
 function setupNBlobLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "N-BLOB";
+
+    layout.predefined_means = ($('#recommended-predefined-means-checkbox').is(':checked'))
+        ? getRecommendedPredefinedMeans($('#location-selection').val())
+        : JSON.parse($('#predefined-means-field').val());
     console.log("stopgenerator.js:setupNBlobLayoutConfig: generation of n-blob layout started");
+}
+
+function getRecommendedPredefinedMeans(locationPk) {
+    // TODO: Should this belong to the preprocessor?
 }
 
 function generateStops(layoutConfig, callback) {
@@ -104,7 +133,6 @@ function generateStops(layoutConfig, callback) {
 }
 
 function displayStopNodes(stopLayoutNodes, selectedColor) {
-
     var style = {
         radius: 5,
         fillColor: selectedColor,
