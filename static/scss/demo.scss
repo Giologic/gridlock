@@ -1,4 +1,4 @@
-html, body {
+html {
   box-sizing: border-box;
   height: 100%;
   margin: 0;
@@ -12,6 +12,7 @@ body {
   display: flex;
   flex-flow: column;
   height: 100%;
+  margin: 0;
 
   .pure-menu {
     border: 1px solid grey;

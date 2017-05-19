@@ -1,4 +1,4 @@
-var locationGeometryLayer; // Global variable where the location geometry layer instance will be stored
+var locationBoundaryLayer; // Global variable where the location geometry layer instance will be stored
 
 $(document).ready(function () {
     console.log("preprocessor.js: document is ready");
@@ -38,16 +38,19 @@ function addLocationAsOption(locationSelection, location) {
 function displayLocationGeometry(leafletMap, locationPk) {
     getLocationGeometry(locationPk, function (locationGeometry) {
         //noinspection EqualityComparisonWithCoercionJS
-        if (locationGeometryLayer != null) {
-            leafletMap.removeLayer(locationGeometryLayer);
+        if (locationBoundaryLayer != null) {
+            leafletMap.removeLayer(locationBoundaryLayer);
         }
 
-        locationGeometryLayer = L.geoJson(locationGeometry);
-        locationGeometryLayer.setStyle(LOCATION_BOUNDARY_STYLE);
-        locationGeometryLayer.addTo(leafletMap);
-        console.log("preprocessor.js:displayLocationGeometry: location geometry displayed on map");
+        locationBoundaryLayer = L.geoJson(locationGeometry);
+        var style = {
+          color: '#000000'
+        };
+        locationBoundaryLayer.setStyle(style);
+        locationBoundaryLayer.addTo(leafletMap);
 
-        restrictToLayer(leafletMap, locationGeometryLayer);
+        console.log("preprocessor.js:displayLocationGeometry: location geometry displayed on map");
+        restrictToLayer(leafletMap, locationBoundaryLayer);
     });
 }
 

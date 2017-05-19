@@ -33,6 +33,7 @@
 <form class="pure-form pure-form-stacked">
     <fieldset>
         <legend>Stop Generator</legend>
+        <!-- Stop Layout Generation Controls -->
         <div class="field">
             <label for="stop-layout-selection">Stop Layout</label>
             <select class="full-width" id="stop-layout-selection">
@@ -40,17 +41,27 @@
                 <option value="2">Random</option>
                 <option value="3">N-Blob</option>
             </select>
-            <a class="pure-button pure-button-primary full-width" id="generate-stop-layout-button">Generate Stop Layout</a>
+            <a class="pure-button pure-button-primary full-width" id="generate-stop-layout-form-button">Generate Stop Layout</a>
         </div>
+        <!-- Add, Move, Delete Controls -->
         <div class="pure-g">
+            <!-- Add Stops -->
             <div class="pure-u-1-3">
-                <a class="pure-button button-xsmall full-width-margin-right"><i class="fa fa-plus fa-lg"></i> Add</a>
+                <a class="pure-button button-xsmall full-width-margin-right" id="add-stops-button">
+                    <i class="fa fa-plus fa-lg"></i> Add
+                </a>
             </div>
+            <!-- Move Stops -->
             <div class="pure-u-1-3">
-                <a class="pure-button button-xsmall full-width-margin-right"><i class="fa fa-arrows fa-lg"></i> Move</a>
+                <a class="pure-button button-xsmall full-width-margin-right" id="move-stops-button">
+                    <i class="fa fa-arrows fa-lg"></i> Move
+                </a>
             </div>
+            <!-- Delete Stops -->
             <div class="pure-u-1-3">
-                <a class="pure-button button-xsmall full-width"><i class="fa fa-trash-o fa-lg"></i> Delete</a>
+                <a class="pure-button button-xsmall full-width" id="delete-stops-button">
+                    <i class="fa fa-trash-o fa-lg"></i> Delete
+                </a>
             </div>
         </div>
     </fieldset>
