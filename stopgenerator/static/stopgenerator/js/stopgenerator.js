@@ -1,18 +1,19 @@
 var stopsLayer; // Global variable where the displayed stops layer will be stored
 
-// TODO: Add dialog for displaying stats such as number of stops
-var activeDialog; // TODO: Is this unnecessary?
+var activeDialog;
 
 $(document).ready(function () {
     console.log("stopgenerator.js: document is ready");
     initializeStopsLayer();
 
+    // Stop Layout Generation Controls
     $("#generate-stop-layout-form-button").click(function () {
         console.log("stopgenerator.js: generate-stop-layout-form-button clicked");
         var settings = stopLayoutDialogSettings[$('#stop-layout-selection').val() - 1];
         showStopLayoutDialog(settings);
     });
 
+    // Add, Move, Delete Controls
     $("#add-stops-button").click(function () {
         console.log("stopgenerator.js: add-stops-btn clicked");
     });
@@ -36,29 +37,66 @@ function showStopLayoutDialog(settings) {
     if (activeDialog != null) {
         activeDialog.remove(leafletMap);
     }
-    activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
-    activeDialog.open();
 
+    activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
+    activeDialog.layoutType = settings["name"];
+    activeDialog.open();
 
     $("#generate-stop-layout-dialog-button").click(function () {
         activeDialog.close();
-        generateStops(function (stopLayoutNodes) {
-            var selectedColor = $("#stops-color-field").val();
-            displayStopNodes(stopLayoutNodes, selectedColor);
-        });
+
+        var layoutConfig = {};
+        if (activeDialog.layoutType === "LATTICE") {
+            setupLatticeLayoutConfig(layoutConfig);
+        } else if (activeDialog.layoutType === "RANDOM") {
+            setupRandomLayoutConfig(layoutConfig);
+        } else if (activeDialog.layoutType === "N-BLOB") {
+            setupNBlobLayoutConfig(layoutConfig);
+        } else {
+            // Invalid state, throw error
+        }
+
+        generateStops(layoutConfig, displayStopNodes);
     });
 }
 
-function generateStops(callback) {
-    $.post(Urls['stopgenerator:generate_stop_layout'](), function (returnedData) {
+function setupLayoutBaseConfig(layoutConfig) {
+    layoutConfig.max_number_stops = $("#max-num-stops-field").val();
+    layoutConfig.max_walking_dist = $("#max-walking-dist-field").val();
+    layoutConfig.color = $("#stops-color-field").val();
+}
+
+function setupLatticeLayoutConfig(layoutConfig) {
+    setupLayoutBaseConfig(layoutConfig);
+    layoutConfig.layout_type = "LATTICE";
+
+
+    console.log("stopgenerator.js:setupLatticeLayoutConfig: generation of lattice layout started");
+}
+
+function setupRandomLayoutConfig(layoutConfig) {
+    setupLayoutBaseConfig(layoutConfig);
+    layoutConfig.layout_type = "RANDOM";
+    console.log("stopgenerator.js:setupRandomLayoutConfig: generation of random layout started");
+}
+
+function setupNBlobLayoutConfig(layoutConfig) {
+    setupLayoutBaseConfig(layoutConfig);
+    layoutConfig.layout_type = "N-BLOB";
+    console.log("stopgenerator.js:setupNBlobLayoutConfig: generation of n-blob layout started");
+}
+
+function generateStops(layoutConfig, callback) {
+    $.post(Urls['stopgenerator:generate_stop_layout'](), layoutConfig, function (returnedData) {
         var stopLayoutNodes = returnedData['stop_layout_nodes'];
         console.log("stopgenerator.js:generateStops: response from server received");
         console.log(stopLayoutNodes);
-        callback(stopLayoutNodes);
+        callback(stopLayoutNodes, layoutConfig.color);
     });
 }
 
 function displayStopNodes(stopLayoutNodes, selectedColor) {
+
     var style = {
         radius: 5,
         fillColor: selectedColor,
