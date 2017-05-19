@@ -61,7 +61,7 @@ function showStopLayoutDialog(settings) {
 }
 
 function setupLayoutBaseConfig(layoutConfig) {
-    layoutConfig.max_number_stops = $("#max-num-stops-field").val();
+    layoutConfig.max_num_stops = $("#max-num-stops-field").val();
     layoutConfig.max_walking_dist = $("#max-walking-dist-field").val();
     layoutConfig.color = $("#stops-color-field").val();
 }
@@ -69,7 +69,15 @@ function setupLayoutBaseConfig(layoutConfig) {
 function setupLatticeLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "LATTICE";
-
+    if ($('#loc-center-lattice-start-checkbox').is(':checked')) {
+        var locationBounds = locationBoundaryLayer.getBounds();
+        var locationCenter = locationBounds.getCenter();
+        layoutConfig.lattice_start_lat = locationCenter.lat;
+        layoutConfig.lattice_start_lng = locationCenter.lng;
+        console.log("stopgenerator.js:setupLatticeLayoutConfig: location center LatLng("
+            + layoutConfig.lattice_start_lat + ", " + layoutConfig.lattice_start_lng +
+            ") set as start of the lattice layout");
+    }
 
     console.log("stopgenerator.js:setupLatticeLayoutConfig: generation of lattice layout started");
 }

@@ -14,8 +14,19 @@ from .computations import LatticeLayout, RandomLayout, NBlobLayout
 def generate_stop_layout(request):
     if request.method == 'POST':
         layout_type = request.POST['layout_type']
+        max_num_stops = int(request.POST['max_num_stops'])
+        max_walking_dist = float(request.POST['max_walking_dist'])
+
         if layout_type == 'LATTICE':
-            stop_layout_nodes = LatticeLayout(20, 350, (120.9747, 14.5896)).generate()
+            print(request.POST)
+            lattice_start_lat = float(request.POST['lattice_start_lat'])
+            lattice_start_lng = float(request.POST['lattice_start_lng'])
+
+            print(lattice_start_lat)
+            print(lattice_start_lng)
+            # stop_layout_nodes = LatticeLayout(max_num_stops, max_walking_dist, (120.9747, 14.5896)).generate()
+            stop_layout_nodes = LatticeLayout(max_num_stops, max_walking_dist,
+                                              (lattice_start_lng, lattice_start_lat)).generate()
         elif layout_type == 'RANDOM':
             location = get_object_or_None(Location, pk=1)
             location_geometry = get_location_geometry(location)

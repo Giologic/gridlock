@@ -16,9 +16,9 @@ class StopLayout(object):
 
 
 class LatticeLayout(StopLayout):
-    def __init__(self, max_num_nodes, max_walking_dist, lattice_start_coord):
+    def __init__(self, max_num_nodes, max_walking_dist, lattice_start_latlng):
         super(LatticeLayout, self).__init__(max_num_nodes, max_walking_dist)
-        self.lattice_start_coord = lattice_start_coord
+        self.lattice_start_latlng = lattice_start_latlng
 
     def generate(self):
         dimension = int(math.ceil(math.sqrt(self.max_num_nodes)))
@@ -26,8 +26,8 @@ class LatticeLayout(StopLayout):
 
         for i in range(1, dimension + 1):
             for j in range(1, dimension + 1):
-                lat = float(self.lattice_start_coord[0]) + float(float(self.max_walking_dist / 111111) * float(i))
-                lng = float(self.lattice_start_coord[1] + float(float(self.max_walking_dist / 111111) * float(j)))
+                lat = float(self.lattice_start_latlng[0]) + float(float(self.max_walking_dist / 111111) * float(i))
+                lng = float(self.lattice_start_latlng[1] + float(float(self.max_walking_dist / 111111) * float(j)))
                 coordinates.append((lat, lng))
 
         coordinates = coordinates[:int(len(coordinates) - (math.pow(dimension, 2) - self.max_num_nodes))]
