@@ -90,17 +90,25 @@ function setupLayoutBaseConfig(layoutConfig) {
 function setupLatticeLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "LATTICE";
+
     if ($('#loc-center-lattice-start-checkbox').is(':checked')) {
-        var locationBounds = locationBoundaryLayer.getBounds();
-        var locationCenter = locationBounds.getCenter();
-        layoutConfig.lattice_start_lat = locationCenter.lat;
-        layoutConfig.lattice_start_lng = locationCenter.lng;
-        console.log("stopgenerator.js:setupLatticeLayoutConfig: location center LatLng("
-            + layoutConfig.lattice_start_lat + ", " + layoutConfig.lattice_start_lng +
-            ") set as start of the lattice layout");
+        var locationCenterLatLng = getLocationCenterLatLng();
+        layoutConfig.lattice_start_lat = locationCenterLatLng.lat;
+        layoutConfig.lattice_start_lng = locationCenterLatLng.lng;
+    } else {
+        layoutConfig.lattice_start_lat = $('#lattice-start-lat-field').val();
+        layoutConfig.lattice_start_lng = $('#lattice-start-lng-field').val();
     }
 
     console.log("stopgenerator.js:setupLatticeLayoutConfig: generation of lattice layout started");
+}
+
+function getLocationCenterLatLng() {
+    var locationBounds = locationBoundaryLayer.getBounds();
+    var locationCenter = locationBounds.getCenter();
+    console.log("stopgenerator.js:getLocationCenterLatLng: location center LatLng calculated as ("
+        + locationCenter.lat + ", " + locationCenter.lng + ")");
+    return locationCenter;
 }
 
 function setupRandomLayoutConfig(layoutConfig) {
