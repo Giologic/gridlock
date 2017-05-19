@@ -9,7 +9,9 @@ $header-color: #adff2f;
     color: $header-color;
   }
 
-  .pure-menu-link:hover {
+  .pure-menu-link:hover,
+  .pure-menu-link:active,
+  .pure-menu-link:visited {
     background: $secondary-color;
   }
 

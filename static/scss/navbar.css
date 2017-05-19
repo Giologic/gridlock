@@ -2,7 +2,9 @@
   background: #0076da; }
   .pure-menu .pure-menu-heading {
     color: #adff2f; }
-  .pure-menu .pure-menu-link:hover {
+  .pure-menu .pure-menu-link:hover,
+  .pure-menu .pure-menu-link:active,
+  .pure-menu .pure-menu-link:visited {
     background: #0083e5; }
   .pure-menu * {
     background: #0076da;
