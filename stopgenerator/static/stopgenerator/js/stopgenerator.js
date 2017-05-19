@@ -30,7 +30,7 @@ function initializeStopsLayer() {
     stopsLayer.addTo(leafletMap);
 }
 
-function showStopLayoutDialog(settings, confirmCallback, cancelCallback) {
+function showStopLayoutDialog(settings) {
     //noinspection EqualityComparisonWithCoercionJS
     if (activeDialog != null) {
         activeDialog.remove(leafletMap);
