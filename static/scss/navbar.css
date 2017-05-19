@@ -1,5 +1,11 @@
-#nav-title a {
-  font-size: large;
-  color: #88f257; }
+.pure-menu {
+  background: #0076da; }
+  .pure-menu .pure-menu-heading {
+    color: #adff2f; }
+  .pure-menu .pure-menu-link:hover {
+    background: #0083e5; }
+  .pure-menu * {
+    background: #0076da;
+    color: white; }
 
 /*# sourceMappingURL=navbar.css.map */

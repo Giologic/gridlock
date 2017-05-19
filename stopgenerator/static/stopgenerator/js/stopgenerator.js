@@ -1,5 +1,6 @@
 var stopsLayer; // Global variable where the displayed stops layer will be stored
 
+// TODO: Add dialog for displaying stats such as number of stops
 var activeDialog; // TODO: Is this unnecessary?
 
 $(document).ready(function () {

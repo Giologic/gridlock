@@ -1,8 +1,20 @@
-$title-color: #88f257;
+$primary-color: #0076da;
+$secondary-color: #0083e5;
+$header-color: #adff2f;
 
-#nav-title {
-  a {
-    font-size: large;
-    color:  $title-color;
+.pure-menu {
+  background: $primary-color;
+
+  .pure-menu-heading {
+    color: $header-color;
+  }
+
+  .pure-menu-link:hover {
+    background: $secondary-color;
+  }
+
+  * {
+    background: $primary-color;
+    color: white;
   }
 }
