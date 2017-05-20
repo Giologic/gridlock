@@ -2,28 +2,28 @@ var stopsLayer; // Global variable where the displayed stops layer will be store
 var activeDialog;
 
 $(document).ready(function () {
-    console.log("stopgenerator.js: document is ready");
+    console.log("stoplayout.js: document is ready");
     initializeStopsLayer();
 
     // Stop Layout Generation Controls
     $("#generate-stop-layout-form-button").click(function () {
-        console.log("stopgenerator.js: generate-stop-layout-form-button clicked");
+        console.log("stoplayout.js: generate-stop-layout-form-button clicked");
         var settings = stopLayoutDialogSettings[$('#stop-layout-selection').val() - 1];
         showStopLayoutDialog(settings);
     });
 
     // Add, Move, Delete Controls
     $("#add-stops-button").click(function () {
-        console.log("stopgenerator.js: add-stops-btn clicked");
+        console.log("stoplayout.js: add-stops-btn clicked");
     });
 
     $("#move-stops-button").click(function () {
-        console.log("stopgenerator.js: move-stops-btn clicked");
+        console.log("stoplayout.js: move-stops-btn clicked");
         // TODO: Use Leaflet.Path.Transform (https://github.com/w8r/Leaflet.Path.Transform) to rotate and translate stops
     });
 
     $("#delete-stops-button").click(function () {
-        console.log("stopgenerator.js: delete-stops-btn clicked");
+        console.log("stoplayout.js: delete-stops-btn clicked");
         // TODO: Use leaflet-area-select (https://github.com/w8r/leaflet-area-select) to select stops
     });
 });
@@ -59,10 +59,8 @@ function setupDialogGenerateButton() {
         } else if (activeDialog.layoutType === "N-BLOB") {
             setupNBlobLayoutConfig(layoutConfig);
         } else {
-            // Invalid state, throw error
+           throw "Active dialog has an invalid layout type.";
         }
-
-        generateStops(layoutConfig, displayStopNodes);
     });
 }
 
@@ -100,13 +98,14 @@ function setupLatticeLayoutConfig(layoutConfig) {
         layoutConfig.lattice_start_lng = $('#lattice-start-lng-field').val();
     }
 
-    console.log("stopgenerator.js:setupLatticeLayoutConfig: generation of lattice layout started");
+    generateStops(layoutConfig, displayStopNodes);
+    console.log("stoplayout.js:setupLatticeLayoutConfig: generation of lattice layout started");
 }
 
 function getLocationCenterLatLng() {
     var locationBounds = locationBoundaryLayer.getBounds();
     var locationCenter = locationBounds.getCenter();
-    console.log("stopgenerator.js:getLocationCenterLatLng: location center LatLng calculated as ("
+    console.log("stoplayout.js:getLocationCenterLatLng: location center LatLng calculated as ("
         + locationCenter.lat + ", " + locationCenter.lng + ")");
     return locationCenter;
 }
@@ -114,27 +113,35 @@ function getLocationCenterLatLng() {
 function setupRandomLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "RANDOM";
-    console.log("stopgenerator.js:setupRandomLayoutConfig: generation of random layout started");
+    generateStops(layoutConfig, displayStopNodes);
+    console.log("stoplayout.js:setupRandomLayoutConfig: generation of random layout started");
 }
 
 function setupNBlobLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "N-BLOB";
 
-    layoutConfig.predefined_means = ($('#recommended-predefined-means-checkbox').is(':checked'))
-        ? getRecommendedPredefinedMeans($('#location-selection').val())
-        : ('[' + $('#predefined-means-field').val() + ']');
-    console.log("stopgenerator.js:setupNBlobLayoutConfig: generation of n-blob layout started");
-}
-
-function getRecommendedPredefinedMeans(locationPk) {
-    // TODO: Should this belong to the preprocessor?
+    if ($('#recommended-predefined-means-checkbox').is(':checked')) {
+        getRecommendedPredefinedMeans($('#location-selection').val(),
+            function(loc_recommended_predefined_means_json) {
+                layoutConfig.predefined_means = loc_recommended_predefined_means_json;
+                generateStops(layoutConfig, displayStopNodes);
+                console.log("stoplayout.js:setupNBlobLayoutConfig: generation of n-blob layout " +
+                    "using recommended predefined means started");
+            }
+        );
+    } else {
+        layoutConfig.predefined_means = '[' + $('#predefined-means-field').val() + ']';
+        generateStops(layoutConfig, displayStopNodes);
+        console.log("stoplayout.js:setupNBlobLayoutConfig: generation of n-blob layout " +
+                    "using manually entered predefined means started");
+    }
 }
 
 function generateStops(layoutConfig, callback) {
     $.post(Urls['stopgenerator:generate_stop_layout'](), layoutConfig, function (returnedData) {
         var stopLayoutNodes = returnedData['stop_layout_nodes'];
-        console.log("stopgenerator.js:generateStops: response from server received");
+        console.log("stoplayout.js:generateStops: response from server received");
         console.log(stopLayoutNodes);
         callback(stopLayoutNodes, layoutConfig.color);
     });

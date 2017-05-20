@@ -1,11 +1,11 @@
 var locationBoundaryLayer; // Global variable where the location geometry layer instance will be stored
 
 $(document).ready(function () {
-    console.log("preprocessor.js: document is ready");
+    console.log("location.js: document is ready");
 
     var locationSelection = $('#location-selection');
     locationSelection.change(function () {
-        console.log("preprocessor.js: location selection changed");
+        console.log("location.js: location selection changed");
         displayLocationGeometry(leafletMap, locationSelection.val());
     });
 
@@ -19,7 +19,7 @@ function displayLocationChoices(leafletMap, locationSelection) {
            addLocationAsOption(locationSelection, location);
         });
         displayLocationGeometry(leafletMap, locationSelection.val());
-        console.log("preprocessor.js:displayLocationChoices: location choices display in select");
+        console.log("location.js:displayLocationChoices: location choices display in select");
     });
 }
 
@@ -49,7 +49,7 @@ function displayLocationGeometry(leafletMap, locationPk) {
         locationBoundaryLayer.setStyle(style);
         locationBoundaryLayer.addTo(leafletMap);
 
-        console.log("preprocessor.js:displayLocationGeometry: location geometry displayed on map");
+        console.log("location.js:displayLocationGeometry: location geometry displayed on map");
         restrictToLayer(leafletMap, locationBoundaryLayer);
     });
 }
@@ -63,5 +63,12 @@ function getLocationGeometry(locationPk, callback) {
 function restrictToLayer(leafletMap, layer) {
     leafletMap.fitBounds(layer.getBounds());
     leafletMap.setMaxBounds(layer.getBounds());
-    console.log("preprocessor.js:restrictToLayer: map display restricted to layer");
+    console.log("location.js:restrictToLayer: map display restricted to layer");
+}
+
+function getRecommendedPredefinedMeans(locationPk, callback) {
+    $.get(Urls['preprocessor:location_recommended_predefined_means'](),
+        {'location_pk': locationPk}, function (returnedData) {
+        callback(returnedData['location_recommended_predefined_means'])
+    })
 }

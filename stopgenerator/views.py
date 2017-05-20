@@ -46,7 +46,6 @@ def generate_random(request, max_num_stops, max_walking_dist):
 
 
 def generate_nblob(request, max_num_stops, max_walking_dist):
-    # [120.9747, 14.6184], [121.0007, 14.5796]
     predefined_means = json.loads(request.POST['predefined_means'])
     print(predefined_means)
     return NBlobLayout(max_num_stops, max_walking_dist, predefined_means, 65).generate()

@@ -6,6 +6,7 @@ import json
 from annoying.functions import get_object_or_None
 from django.core import serializers
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Location
 from .utils import get_location_geometry
@@ -24,3 +25,11 @@ def location_geometry(request):
         return JsonResponse({
             'location_geometry': json.dumps(get_location_geometry(location))
         })
+
+
+def location_recommended_predefined_means(request):
+    if request.method == 'GET':
+        location_pk = request.GET['location_pk']
+        location = get_object_or_None(Location, pk=location_pk)
+        return JsonResponse({'location_recommended_predefined_means': location.recommended_predefined_means})
+
