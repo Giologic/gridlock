@@ -1,31 +1,5 @@
-var stopsLayer; // Global variable where the displayed stops layer will be stored
-var activeDialog;
-
 $(document).ready(function () {
     console.log("stoplayout.js: document is ready");
-    initializeStopsLayer();
-
-    // Stop Layout Generation Controls
-    $("#generate-stop-layout-form-button").click(function () {
-        console.log("stoplayout.js: generate-stop-layout-form-button clicked");
-        var settings = stopLayoutDialogSettings[$('#stop-layout-selection').val() - 1];
-        showStopLayoutDialog(settings);
-    });
-
-    // Add, Move, Delete Controls
-    $("#add-stops-button").click(function () {
-        console.log("stoplayout.js: add-stops-btn clicked");
-    });
-
-    $("#move-stops-button").click(function () {
-        console.log("stoplayout.js: move-stops-btn clicked");
-        // TODO: Use Leaflet.Path.Transform (https://github.com/w8r/Leaflet.Path.Transform) to rotate and translate stops
-    });
-
-    $("#delete-stops-button").click(function () {
-        console.log("stoplayout.js: delete-stops-btn clicked");
-        // TODO: Use leaflet-area-select (https://github.com/w8r/leaflet-area-select) to select stops
-    });
 });
 
 function initializeStopsLayer() {
@@ -64,27 +38,6 @@ function setupDialogGenerateButton() {
     });
 }
 
-function setupDialogCheckboxes() {
-    if (activeDialog.layoutType === "LATTICE") {
-        var locCenterLatticeStartCheckbox = $('#loc-center-lattice-start-checkbox');
-        locCenterLatticeStartCheckbox.change(function () {
-            $('#lattice-start-lat-field').attr('disabled', locCenterLatticeStartCheckbox.is(':checked'));
-            $('#lattice-start-lng-field').attr('disabled', locCenterLatticeStartCheckbox.is(':checked'));
-        });
-    } else if (activeDialog.layoutType === "N-BLOB") {
-        var recommendedPredefinedMeansCheckbox = $('#recommended-predefined-means-checkbox');
-        recommendedPredefinedMeansCheckbox.change(function() {
-            $('#predefined-means-field').attr('disabled', recommendedPredefinedMeansCheckbox.is(':checked'));
-        });
-    }
-}
-
-function setupLayoutBaseConfig(layoutConfig) {
-    layoutConfig.max_num_stops = $("#max-num-stops-field").val();
-    layoutConfig.max_walking_dist = $("#max-walking-dist-field").val();
-    layoutConfig.color = $("#stops-color-field").val();
-}
-
 function setupLatticeLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "LATTICE";
@@ -102,12 +55,37 @@ function setupLatticeLayoutConfig(layoutConfig) {
     console.log("stoplayout.js:setupLatticeLayoutConfig: generation of lattice layout started");
 }
 
-function getLocationCenterLatLng() {
-    var locationBounds = locationBoundaryLayer.getBounds();
-    var locationCenter = locationBounds.getCenter();
-    console.log("stoplayout.js:getLocationCenterLatLng: location center LatLng calculated as ("
-        + locationCenter.lat + ", " + locationCenter.lng + ")");
-    return locationCenter;
+function setupLayoutBaseConfig(layoutConfig) {
+    layoutConfig.max_num_stops = $("#max-num-stops-field").val();
+    layoutConfig.max_walking_dist = $("#max-walking-dist-field").val();
+    layoutConfig.color = $("#stops-color-field").val();
+}
+
+function generateStops(layoutConfig, callback) {
+    $.post(Urls['stopgenerator:generate_stop_layout'](), layoutConfig, function (returnedData) {
+        var stopLayoutNodes = returnedData['stop_layout_nodes'];
+        console.log("stoplayout.js:generateStops: response from server received");
+        console.log(stopLayoutNodes);
+        callback(stopLayoutNodes, layoutConfig.color);
+    });
+}
+
+function displayStopNodes(stopLayoutNodes, selectedColor) {
+    var style = {
+        radius: 5,
+        fillColor: selectedColor,
+        color: "#000000", // stop outline color
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+
+    stopLayoutNodes.forEach(function(node) {
+        var coord = node['latlng'];
+        var latLng = L.latLng(coord[0], coord[1]);
+        var stopNodeMarker = L.circleMarker(latLng, style);
+        stopsLayer.addLayer(stopNodeMarker);
+    });
 }
 
 function setupRandomLayoutConfig(layoutConfig) {
@@ -138,29 +116,17 @@ function setupNBlobLayoutConfig(layoutConfig) {
     }
 }
 
-function generateStops(layoutConfig, callback) {
-    $.post(Urls['stopgenerator:generate_stop_layout'](), layoutConfig, function (returnedData) {
-        var stopLayoutNodes = returnedData['stop_layout_nodes'];
-        console.log("stoplayout.js:generateStops: response from server received");
-        console.log(stopLayoutNodes);
-        callback(stopLayoutNodes, layoutConfig.color);
-    });
-}
-
-function displayStopNodes(stopLayoutNodes, selectedColor) {
-    var style = {
-        radius: 5,
-        fillColor: selectedColor,
-        color: "#000000", // stop outline color
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    };
-
-    stopLayoutNodes.forEach(function(node) {
-        var coord = node['latlng'];
-        var latLng = L.latLng(coord[0], coord[1]);
-        var stopNodeMarker = L.circleMarker(latLng, style);
-        stopsLayer.addLayer(stopNodeMarker);
-    });
+function setupDialogCheckboxes() {
+    if (activeDialog.layoutType === "LATTICE") {
+        var locCenterLatticeStartCheckbox = $('#loc-center-lattice-start-checkbox');
+        locCenterLatticeStartCheckbox.change(function () {
+            $('#lattice-start-lat-field').attr('disabled', locCenterLatticeStartCheckbox.is(':checked'));
+            $('#lattice-start-lng-field').attr('disabled', locCenterLatticeStartCheckbox.is(':checked'));
+        });
+    } else if (activeDialog.layoutType === "N-BLOB") {
+        var recommendedPredefinedMeansCheckbox = $('#recommended-predefined-means-checkbox');
+        recommendedPredefinedMeansCheckbox.change(function() {
+            $('#predefined-means-field').attr('disabled', recommendedPredefinedMeansCheckbox.is(':checked'));
+        });
+    }
 }

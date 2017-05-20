@@ -1,15 +1,5 @@
-var locationBoundaryLayer; // Global variable where the location geometry layer instance will be stored
-
 $(document).ready(function () {
     console.log("location.js: document is ready");
-
-    var locationSelection = $('#location-selection');
-    locationSelection.change(function () {
-        console.log("location.js: location selection changed");
-        displayLocationGeometry(leafletMap, locationSelection.val());
-    });
-
-    displayLocationChoices(leafletMap, locationSelection);
 });
 
 function displayLocationChoices(leafletMap, locationSelection) {
@@ -64,6 +54,14 @@ function restrictToLayer(leafletMap, layer) {
     leafletMap.fitBounds(layer.getBounds());
     leafletMap.setMaxBounds(layer.getBounds());
     console.log("location.js:restrictToLayer: map display restricted to layer");
+}
+
+function getLocationCenterLatLng() {
+    var locationBounds = locationBoundaryLayer.getBounds();
+    var locationCenter = locationBounds.getCenter();
+    console.log("stoplayout.js:getLocationCenterLatLng: location center LatLng calculated as ("
+        + locationCenter.lat + ", " + locationCenter.lng + ")");
+    return locationCenter;
 }
 
 function getRecommendedPredefinedMeans(locationPk, callback) {
