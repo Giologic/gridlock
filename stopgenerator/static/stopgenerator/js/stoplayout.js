@@ -158,8 +158,8 @@ function displayStopNodes(stopLayoutNodes, selectedColor) {
     };
 
     stopLayoutNodes.forEach(function(node) {
-        var coord = node['coordinates'];
-        var latLng = L.latLng(coord[1], coord[0]);
+        var coord = node['latlng'];
+        var latLng = L.latLng(coord[0], coord[1]);
         var stopNodeMarker = L.circleMarker(latLng, style);
         stopsLayer.addLayer(stopNodeMarker);
     });

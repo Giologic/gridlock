@@ -11,8 +11,6 @@ from preprocessor.models import Location
 from preprocessor.utils import get_location_geometry
 from .computations import LatticeLayout, RandomLayout, NBlobLayout
 
-# TODO: Refactor for consistency; sometimes its (lat, lng) at other times its (lng , lat)
-
 
 @csrf_exempt
 def generate_stop_layout(request):
@@ -36,7 +34,7 @@ def generate_stop_layout(request):
 def generate_lattice(request, max_num_stops, max_walking_dist):
     lattice_start_lat = float(request.POST['lattice_start_lat'])
     lattice_start_lng = float(request.POST['lattice_start_lng'])
-    return LatticeLayout(max_num_stops, max_walking_dist, (lattice_start_lng, lattice_start_lat)).generate()
+    return LatticeLayout(max_num_stops, max_walking_dist, (lattice_start_lat, lattice_start_lng)).generate()
 
 
 def generate_random(request, max_num_stops, max_walking_dist):

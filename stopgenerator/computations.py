@@ -6,7 +6,7 @@ import numpy as np
 import operator as op
 
 from vtown.geo.polygon import Polygon
-from .utils import convert_point_to_coordinate, convert_coordinates_to_nodes, get_location_bounds
+from .utils import convert_point_to_latlng, convert_latlng_to_stop_nodes, get_location_bounds
 
 
 class StopLayout(object):
@@ -22,16 +22,16 @@ class LatticeLayout(StopLayout):
 
     def generate(self):
         dimension = int(math.ceil(math.sqrt(self.max_num_nodes)))
-        coordinates = []
+        latlng_list = []
 
         for i in range(1, dimension + 1):
             for j in range(1, dimension + 1):
                 lat = float(self.lattice_start_latlng[0]) + float(float(self.max_walking_dist / 111111) * float(i))
                 lng = float(self.lattice_start_latlng[1] + float(float(self.max_walking_dist / 111111) * float(j)))
-                coordinates.append((lat, lng))
+                latlng_list.append((lat, lng))
 
-        coordinates = coordinates[:int(len(coordinates) - (math.pow(dimension, 2) - self.max_num_nodes))]
-        return convert_coordinates_to_nodes(coordinates)
+        latlng_list = latlng_list[:int(len(latlng_list) - (math.pow(dimension, 2) - self.max_num_nodes))]
+        return convert_latlng_to_stop_nodes(latlng_list)
 
 
 class RandomLayout(StopLayout):
@@ -41,8 +41,8 @@ class RandomLayout(StopLayout):
 
     def generate(self):
         polygon = Polygon(*self.location_bounds)
-        coordinates = [convert_point_to_coordinate(polygon.random_point()) for _ in range(self.max_num_nodes)]
-        return convert_coordinates_to_nodes(coordinates)
+        latlng_list = [convert_point_to_latlng(polygon.random_point()) for _ in range(self.max_num_nodes)]
+        return convert_latlng_to_stop_nodes(latlng_list)
 
 
 class NBlobLayout(StopLayout):
@@ -58,9 +58,9 @@ class NBlobLayout(StopLayout):
 
         size = op.floordiv(self.max_num_nodes, len(self.predefined_means))
 
-        coordinates = []
+        latlng_list = []
         for means in self.predefined_means:
             random_samples = np.random.multivariate_normal(means, covariances, size).T
-            coordinates.extend(zip(random_samples[0], random_samples[1]))
+            latlng_list.extend(zip(random_samples[1], random_samples[0]))
 
-        return convert_coordinates_to_nodes(coordinates)
+        return convert_latlng_to_stop_nodes(latlng_list)
