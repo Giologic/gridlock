@@ -123,7 +123,7 @@ function setupNBlobLayoutConfig(layoutConfig) {
 
     layoutConfig.predefined_means = ($('#recommended-predefined-means-checkbox').is(':checked'))
         ? getRecommendedPredefinedMeans($('#location-selection').val())
-        : JSON.parse($('#predefined-means-field').val());
+        : ('[' + $('#predefined-means-field').val() + ']');
     console.log("stopgenerator.js:setupNBlobLayoutConfig: generation of n-blob layout started");
 }
 
