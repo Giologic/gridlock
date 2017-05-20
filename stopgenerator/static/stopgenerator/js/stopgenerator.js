@@ -20,10 +20,12 @@ $(document).ready(function () {
 
     $("#move-stops-button").click(function () {
         console.log("stopgenerator.js: move-stops-btn clicked");
+        // TODO: Use Leaflet.Path.Transform (https://github.com/w8r/Leaflet.Path.Transform) to rotate and translate stops
     });
 
     $("#delete-stops-button").click(function () {
         console.log("stopgenerator.js: delete-stops-btn clicked");
+        // TODO: Use leaflet-area-select (https://github.com/w8r/leaflet-area-select) to select stops
     });
 });
 
@@ -121,7 +123,7 @@ function setupNBlobLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "N-BLOB";
 
-    layout.predefined_means = ($('#recommended-predefined-means-checkbox').is(':checked'))
+    layoutConfig.predefined_means = ($('#recommended-predefined-means-checkbox').is(':checked'))
         ? getRecommendedPredefinedMeans($('#location-selection').val())
         : JSON.parse($('#predefined-means-field').val());
     console.log("stopgenerator.js:setupNBlobLayoutConfig: generation of n-blob layout started");

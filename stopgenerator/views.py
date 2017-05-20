@@ -20,18 +20,28 @@ def generate_stop_layout(request):
         max_walking_dist = float(request.POST['max_walking_dist'])
 
         if layout_type == 'LATTICE':
-            lattice_start_lat = float(request.POST['lattice_start_lat'])
-            lattice_start_lng = float(request.POST['lattice_start_lng'])
-            stop_layout_nodes = LatticeLayout(max_num_stops, max_walking_dist,
-                                              (lattice_start_lng, lattice_start_lat)).generate()
+            stop_layout_nodes = generate_lattice(request, max_num_stops, max_walking_dist)
         elif layout_type == 'RANDOM':
-            location = get_object_or_None(Location, pk=1)
-            location_geometry = get_location_geometry(location)
-            stop_layout_nodes = RandomLayout(max_num_stops, max_walking_dist, location_geometry).generate()
+            stop_layout_nodes = generate_random(request, max_num_stops, max_walking_dist)
         elif layout_type == 'N-BLOB':
-            stop_layout_nodes = NBlobLayout(100, 350, [(120.9747, 14.6184), (121.0007, 14.5796)], 65).generate()
+            stop_layout_nodes = generate_nblob(request, max_num_stops, max_walking_dist)
         else:
-            stop_layout_nodes = None
-            print("ERROR: Invalid layout type")
+            raise ValueError("Invalid stop layout type")
 
         return JsonResponse({'stop_layout_nodes': [n.__dict__ for n in stop_layout_nodes]})
+
+
+def generate_lattice(request, max_num_stops, max_walking_dist):
+    lattice_start_lat = float(request.POST['lattice_start_lat'])
+    lattice_start_lng = float(request.POST['lattice_start_lng'])
+    return LatticeLayout(max_num_stops, max_walking_dist, (lattice_start_lng, lattice_start_lat)).generate()
+
+
+def generate_random(request, max_num_stops, max_walking_dist):
+    location = get_object_or_None(Location, pk=1)
+    location_geometry = get_location_geometry(location)
+    return RandomLayout(max_num_stops, max_walking_dist, location_geometry).generate()
+
+
+def generate_nblob(request, max_num_stops, max_walking_dist):
+    return NBlobLayout(100, 350, [(120.9747, 14.6184), (121.0007, 14.5796)], 65).generate()
