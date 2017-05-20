@@ -1,5 +1,4 @@
 var stopsLayer; // Global variable where the displayed stops layer will be stored
-
 var activeDialog;
 
 $(document).ready(function () {
@@ -43,7 +42,6 @@ function showStopLayoutDialog(settings) {
     activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
     activeDialog.layoutType = settings["name"];
     activeDialog.open();
-
 
     setupDialogGenerateButton();
     setupDialogCheckboxes();

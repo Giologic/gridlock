@@ -9,14 +9,18 @@ $header-color: #adff2f;
     color: $header-color;
   }
 
-  .pure-menu-link:hover,
-  .pure-menu-link:active,
-  .pure-menu-link:visited {
-    background: $secondary-color;
-  }
-
   * {
     background: $primary-color;
     color: white;
+  }
+
+  .pure-menu-link:visited {
+    background: $primary-color;
+  }
+
+  .pure-menu-link:hover,
+  .pure-menu-link:active
+   {
+    background: $secondary-color;
   }
 }
