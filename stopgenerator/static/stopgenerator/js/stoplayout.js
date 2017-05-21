@@ -2,9 +2,12 @@ $(document).ready(function () {
     console.log("stoplayout.js: document is ready");
 });
 
-function initializeStopsLayer() {
-    stopsLayer = L.featureGroup();
-    stopsLayer.addTo(leafletMap);
+function initializeStopLayouts() {
+    $("#generate-stop-layout-form-button").click(function () {
+        console.log("stoplayout.js: generate-stop-layout-form-button clicked");
+        var settings = stopLayoutDialogSettings[$('#stop-layout-selection').val() - 1];
+        showStopLayoutDialog(settings);
+    });
 }
 
 function showStopLayoutDialog(settings) {

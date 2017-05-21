@@ -2,6 +2,16 @@ $(document).ready(function () {
     console.log("location.js: document is ready");
 });
 
+function initializeLocations() {
+    var locationSelection = $('#location-selection');
+    locationSelection.change(function () {
+        console.log("demo.js: location selection changed");
+        displayLocationGeometry(leafletMap, locationSelection.val());
+    });
+
+    displayLocationChoices(leafletMap, locationSelection);
+}
+
 function displayLocationChoices(leafletMap, locationSelection) {
     getLocations(function (locationList) {
         locationSelection.empty();
