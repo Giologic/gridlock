@@ -14,7 +14,10 @@ function initializeStopManagement() {
 
     moveStopsButton.click(function () {
         console.log("stopmanagement.js: move-stops-btn clicked");
-        toggleButtonActive(moveStopsButton, [addStopsButton, deleteStopsButton], enableAreaSelect, disableAreaSelect);
+        toggleButtonActive(moveStopsButton, [addStopsButton, deleteStopsButton], function () {
+            enableAreaSelect();
+
+        }, disableAreaSelect);
     });
 
     deleteStopsButton.click(function () {
@@ -45,15 +48,41 @@ function setDisabled(buttons, disabled) {
 
 function enableAreaSelect() {
     leafletMap.selectArea.enable();
-    leafletMap.on('areaselected', function (e) {
-        console.log(e.bounds.toBBoxString()); // lon, lat, lon, lat
+    leafletMap.on('areaselected', function (selectionEvent) {
+        updateStopsHighlight(selectionEvent);
     });
+
     leafletMap.selectArea.setControlKey(false);
     console.log("stopmanagement.js:enableAreaSelect: Area selection via CTRL key enabled");
 }
 
+function updateStopsHighlight(selectionEvent) {
+    if (selectionEvent === null) {
+        // Remove highlighting of all stop nodes
+        stopsLayer.eachLayer(function (stopNode) {
+            setHighlight(stopNode, false);
+        });
+    } else {
+        // Highlight nodes that are inside the selection bounds
+        L.Util.requestAnimFrame(function () {
+            stopsLayer.eachLayer(function (stopNode) {
+                setHighlight(stopNode, selectionEvent.bounds.contains(stopNode.getLatLng()));
+            }) ;
+        });
+    }
+}
+
+function setHighlight(stopNode, highlighted) {
+    stopNode.setStyle({
+        color: highlighted ? 'red' : '#000000',
+        weight: highlighted ? 2 : 1
+    });
+}
+
 function disableAreaSelect() {
     leafletMap.selectArea.disable();
+    updateStopsHighlight(null);
     console.log("stopmanagement.js:disableAreaSelect: Area selection via CTRL key disabled");
 }
+
 
