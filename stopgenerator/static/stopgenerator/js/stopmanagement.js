@@ -42,8 +42,11 @@ function enableStopMovement() {
 
         var selectedStopNodes = getSelectedStopNodes(selectionEvent);
 
-        if (Object.keys(selectedStopNodes.getBounds()).length > 0) { // If bounds is not empty
-            leafletMap.fitBounds(selectedStopNodes.getBounds().pad(1 / 4));
+        var boundsSize = Object.keys(selectedStopNodes.getBounds()).length;
+        if (boundsSize > 0) { // If bounds is not empty
+            if (selectedStopNodes.getLayers().length > 1) {
+                leafletMap.fitBounds(selectedStopNodes.getBounds().pad(1 / 4));
+            }
             selectionAreaPolygon = createPolygonFromBounds(selectedStopNodes.getBounds());
             selectionAreaPolygon.addTo(leafletMap);
             selectionAreaPolygon.transform.enable({scaling: false});
