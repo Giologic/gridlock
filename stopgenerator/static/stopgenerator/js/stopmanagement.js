@@ -63,7 +63,6 @@ function enableStopMovement() {
     });
 }
 
-
 function getSelectedStopNodes(selectionEvent) {
     var selectedStopNodes = L.featureGroup();
     stopsLayer.eachLayer(function (stopNode) {
@@ -82,11 +81,15 @@ function createPolygonFromBounds(latLngBounds) {
     var southWest = latLngBounds.getSouthWest();
 
     if (northEast.equals(southEast)) { // Horizontal line
-        northEast = L.latLng(southEast.lat + 0.0001, southEast.lng + 0.0001);
-        northWest = L.latLng(southWest.lat + 0.0001, southWest.lng + 0.0001);
+        northEast = L.latLng(southEast.lat + 0.0002, southEast.lng + 0.0002);
+        northWest = L.latLng(southWest.lat + 0.0002, southWest.lng - 0.0002);
+        southEast = L.latLng(southEast.lat - 0.0002, southEast.lng + 0.0002);
+        southWest = L.latLng(southWest.lat - 0.0002, southWest.lng - 0.0002);
     } else if (northWest.equals(northEast)) { // Vertical line
-        northEast = L.latLng(northWest.lat + 0.0001, northWest.lng + 0.0001);
-        southEast = L.latLng(southWest.lat + 0.0001, southWest.lng + 0.0001);
+        northEast = L.latLng(northWest.lat + 0.0002, northWest.lng + 0.0002);
+        southEast = L.latLng(southWest.lat - 0.0002, southWest.lng + 0.0002);
+        northWest = L.latLng(northWest.lat + 0.0002, northWest.lng - 0.0002);
+        southWest = L.latLng(southWest.lat - 0.0002, southWest.lng - 0.0002);
     }
 
     return new L.polygon([northWest, northEast, southEast, southWest], {draggable: true, transform: true});
