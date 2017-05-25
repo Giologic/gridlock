@@ -50,10 +50,19 @@ function enableAreaSelect() {
     leafletMap.selectArea.enable();
     leafletMap.on('areaselected', function (selectionEvent) {
         updateStopsHighlight(selectionEvent);
+        var polygon = createPolygonFromBounds(selectionEvent.bounds);
+        console.log(polygon);
+        console.log(selectionEvent.bounds);
+        polygon.addTo(leafletMap);
     });
 
     leafletMap.selectArea.setControlKey(false);
-    console.log("stopmanagement.js:enableAreaSelect: Area selection via CTRL key enabled");
+    console.log("stopmanagement.js:enableAreaSelect: Area selection by dragging the mouse enabled");
+}
+
+function createPolygonFromBounds(latLngBounds) {
+  return new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
+      latLngBounds.getSouthEast(), latLngBounds.getSouthWest()]);
 }
 
 function updateStopsHighlight(selectionEvent) {
@@ -82,7 +91,5 @@ function setHighlight(stopNode, highlighted) {
 function disableAreaSelect() {
     leafletMap.selectArea.disable();
     updateStopsHighlight(null);
-    console.log("stopmanagement.js:disableAreaSelect: Area selection via CTRL key disabled");
+    console.log("stopmanagement.js:disableAreaSelect: Area selection by dragging the mouse disabled");
 }
-
-

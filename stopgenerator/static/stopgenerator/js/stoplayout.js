@@ -80,7 +80,7 @@ function displayStopNodes(stopLayoutNodes, selectedColor) {
         color: "#000000", // stop outline color
         weight: 1,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 0.8,
     };
 
     stopLayoutNodes.forEach(function(node) {
