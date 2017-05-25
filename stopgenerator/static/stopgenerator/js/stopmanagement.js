@@ -41,23 +41,28 @@ function enableStopMovement() {
         }
 
         var selectedStopNodes = getSelectedStopNodes(selectionEvent);
-        leafletMap.fitBounds(selectedStopNodes.getBounds().pad(1 / 4));
 
-        selectionAreaPolygon = createPolygonFromBounds(selectedStopNodes.getBounds());
-        selectionAreaPolygon.addTo(leafletMap);
-        selectionAreaPolygon.transform.enable({scaling: false});
-        selectionAreaPolygon.on('rotate', function (rotation) {
-            selectedStopNodes.eachLayer(function (stopNode) {
-               var matrix = rotation.layer.transform._matrix;
-               var transformedPoint = matrix.transform(stopNode._point);
-               stopNode.setLatLng(leafletMap.layerPointToLatLng(transformedPoint));
+        if (Object.keys(selectedStopNodes.getBounds()).length > 0) { // If bounds is not empty
+            leafletMap.fitBounds(selectedStopNodes.getBounds().pad(1 / 4));
+            selectionAreaPolygon = createPolygonFromBounds(selectedStopNodes.getBounds());
+            selectionAreaPolygon.addTo(leafletMap);
+            selectionAreaPolygon.transform.enable({scaling: false});
+
+            selectionAreaPolygon.on('rotate', function (rotation) {
+                selectedStopNodes.eachLayer(function (stopNode) {
+                   var matrix = rotation.layer.transform._matrix;
+                   var transformedPoint = matrix.transform(stopNode._point);
+                   stopNode.setLatLng(leafletMap.layerPointToLatLng(transformedPoint));
+                });
             });
-        });
-        selectionAreaPolygon.on('drag', function (event) {
-            console.log(event);
-        });
+
+            selectionAreaPolygon.on('drag', function (event) {
+                console.log(event);
+            });
+        }
     });
 }
+
 
 function getSelectedStopNodes(selectionEvent) {
     var selectedStopNodes = L.featureGroup();
@@ -70,14 +75,21 @@ function getSelectedStopNodes(selectionEvent) {
     return selectedStopNodes;
 }
 
-function createFeatureGroup() {
-    return new L.geoJSON({draggable: true, transform: true});
-}
-
 function createPolygonFromBounds(latLngBounds) {
-  var polygon =  new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
-      latLngBounds.getSouthEast(), latLngBounds.getSouthWest()], {draggable: true, transform: true});
-  return polygon;
+    var northWest = latLngBounds.getNorthWest();
+    var northEast = latLngBounds.getNorthEast();
+    var southEast = latLngBounds.getSouthEast();
+    var southWest = latLngBounds.getSouthWest();
+
+    if (northEast.equals(southEast)) { // Horizontal line
+        northEast = L.latLng(southEast.lat + 0.0001, southEast.lng + 0.0001);
+        northWest = L.latLng(southWest.lat + 0.0001, southWest.lng + 0.0001);
+    } else if (northWest.equals(northEast)) { // Vertical line
+        northEast = L.latLng(northWest.lat + 0.0001, northWest.lng + 0.0001);
+        southEast = L.latLng(southWest.lat + 0.0001, southWest.lng + 0.0001);
+    }
+
+    return new L.polygon([northWest, northEast, southEast, southWest], {draggable: true, transform: true});
 }
 
 function updateStopsHighlight(selectionEvent) {
