@@ -16,6 +16,8 @@ $(document).ready(function () {
     initializeStopsLayer();
     initializeStopLayouts();
     initializeStopManagement();
+
+
 });
 
 function initializeStopsLayer() {

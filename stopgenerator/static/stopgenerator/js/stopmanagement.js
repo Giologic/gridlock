@@ -54,6 +54,8 @@ function enableAreaSelect() {
         console.log(polygon);
         console.log(selectionEvent.bounds);
         polygon.addTo(leafletMap);
+        polygon.transform.enable({scaling: false});
+        console.log(polygon.transform);
     });
 
     leafletMap.selectArea.setControlKey(false);
@@ -61,8 +63,9 @@ function enableAreaSelect() {
 }
 
 function createPolygonFromBounds(latLngBounds) {
-  return new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
-      latLngBounds.getSouthEast(), latLngBounds.getSouthWest()]);
+  var polygon =  new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
+      latLngBounds.getSouthEast(), latLngBounds.getSouthWest()], {draggable: true, transform: true});
+  return polygon;
 }
 
 function updateStopsHighlight(selectionEvent) {
