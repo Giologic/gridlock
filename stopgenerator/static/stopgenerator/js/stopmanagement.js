@@ -57,7 +57,6 @@ function disableStopMovement() {
     if (selectionAreaPolygon != null) {
         removeSelectedAreaPolygon();
     }
-
     disableAreaSelect();
 }
 
@@ -122,6 +121,7 @@ function setHighlight(stopNode, highlighted) {
 }
 
 function disableAreaSelect() {
+    leafletMap.off('areaselected');
     leafletMap.selectArea.disable();
     updateStopsHighlight(null);
     console.log("stopmanagement.js:disableAreaSelect: Area selection by dragging the mouse disabled");
