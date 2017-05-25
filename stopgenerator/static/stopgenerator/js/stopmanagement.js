@@ -40,20 +40,17 @@ function enableStopMovement() {
             removeSelectedAreaPolygon();
         }
 
-        selectionAreaPolygon = createPolygonFromBounds(selectionEvent.bounds);
+        var selectedStopNodes = getSelectedStopNodes(selectionEvent);
+        leafletMap.fitBounds(selectedStopNodes.getBounds().pad(1 / 4));
+
+        selectionAreaPolygon = createPolygonFromBounds(selectedStopNodes.getBounds());
         selectionAreaPolygon.addTo(leafletMap);
         selectionAreaPolygon.transform.enable({scaling: false});
         selectionAreaPolygon.on('rotate', function (rotation) {
-            var selectedStopNodes = getSelectedStopNodes(selectionEvent);
-            selectedStopNodes.forEach(function (stopNode) {
-
-               var stopNodePoint = leafletMap.latLngToLayerPoint(stopNode._latlng);
-
+            selectedStopNodes.eachLayer(function (stopNode) {
                var matrix = rotation.layer.transform._matrix;
-               var transformedPoint = matrix.transform(stopNodePoint);
-               var transformedLatLng = leafletMap.layerPointToLatLng(transformedPoint);
-
-               stopNode.setLatLng(transformedLatLng);
+               var transformedPoint = matrix.transform(stopNode._point);
+               stopNode.setLatLng(leafletMap.layerPointToLatLng(transformedPoint));
             });
         });
         selectionAreaPolygon.on('drag', function (event) {
@@ -63,10 +60,10 @@ function enableStopMovement() {
 }
 
 function getSelectedStopNodes(selectionEvent) {
-    var selectedStopNodes = [];
+    var selectedStopNodes = L.featureGroup();
     stopsLayer.eachLayer(function (stopNode) {
         if (selectionEvent.bounds.contains(stopNode.getLatLng())) {
-            selectedStopNodes.push(stopNode);
+            selectedStopNodes.addLayer(stopNode);
         }
     });
 
