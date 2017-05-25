@@ -1,3 +1,5 @@
+var selectionAreaPolygon;
+
 $(document).ready(function () {
     console.log("stopmanagement.js: document is ready");
 });
@@ -14,16 +16,49 @@ function initializeStopManagement() {
 
     moveStopsButton.click(function () {
         console.log("stopmanagement.js: move-stops-btn clicked");
-        toggleButtonActive(moveStopsButton, [addStopsButton, deleteStopsButton], function () {
-            enableAreaSelect();
-
-        }, disableAreaSelect);
+        toggleButtonActive(moveStopsButton, [addStopsButton, deleteStopsButton],
+            enableStopMovement, disableStopMovement);
     });
 
     deleteStopsButton.click(function () {
         console.log("stopmanagement.js: delete-stops-btn clicked");
-        toggleButtonActive(deleteStopsButton, [addStopsButton, moveStopsButton], enableAreaSelect, disableAreaSelect);
+        toggleButtonActive(deleteStopsButton, [addStopsButton, moveStopsButton], enableStopDeletion, disableAreaSelect);
     });
+}
+
+function enableStopDeletion() {
+    enableAreaSelect(function(selectionEvent) {
+        updateStopsHighlight(selectionEvent);
+    });
+}
+
+function enableStopMovement() {
+    enableAreaSelect(function(selectionEvent) {
+        //noinspection EqualityComparisonWithCoercionJS
+        if (selectionAreaPolygon != null) {
+            removeSelectedAreaPolygon();
+        }
+
+        selectionAreaPolygon = createPolygonFromBounds(selectionEvent.bounds);
+        selectionAreaPolygon.addTo(leafletMap);
+        selectionAreaPolygon.transform.enable({scaling: false});
+    });
+}
+
+function removeSelectedAreaPolygon() {
+    selectionAreaPolygon.dragging.disable();
+    selectionAreaPolygon.transform.disable();
+    leafletMap.removeLayer(selectionAreaPolygon);
+    selectionAreaPolygon = null;
+}
+
+function disableStopMovement() {
+    //noinspection EqualityComparisonWithCoercionJS
+    if (selectionAreaPolygon != null) {
+        removeSelectedAreaPolygon();
+    }
+
+    disableAreaSelect();
 }
 
 function toggleButtonActive(buttonClicked, otherButtons, callbackActivate, callbackDeactivate) {
@@ -46,21 +81,16 @@ function setDisabled(buttons, disabled) {
     });
 }
 
-function enableAreaSelect() {
+function enableAreaSelect(callback) {
     leafletMap.selectArea.enable();
     leafletMap.on('areaselected', function (selectionEvent) {
-        updateStopsHighlight(selectionEvent);
-        var polygon = createPolygonFromBounds(selectionEvent.bounds);
-        console.log(polygon);
-        console.log(selectionEvent.bounds);
-        polygon.addTo(leafletMap);
-        polygon.transform.enable({scaling: false});
-        console.log(polygon.transform);
+        callback(selectionEvent);
     });
 
     leafletMap.selectArea.setControlKey(false);
     console.log("stopmanagement.js:enableAreaSelect: Area selection by dragging the mouse enabled");
 }
+
 
 function createPolygonFromBounds(latLngBounds) {
   var polygon =  new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
