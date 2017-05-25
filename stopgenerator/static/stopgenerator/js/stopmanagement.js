@@ -1,4 +1,5 @@
 var selectionAreaPolygon;
+var selectionAreaMultiPoints;
 
 $(document).ready(function () {
     console.log("stopmanagement.js: document is ready");
@@ -42,6 +43,66 @@ function enableStopMovement() {
         selectionAreaPolygon = createPolygonFromBounds(selectionEvent.bounds);
         selectionAreaPolygon.addTo(leafletMap);
         selectionAreaPolygon.transform.enable({scaling: false});
+        selectionAreaPolygon.on('rotate', function (rotation) {
+            var selectedStopNodes = getSelectedStopNodes(selectionEvent);
+            selectedStopNodes.forEach(function (stopNode) {
+
+               var stopNodePoint = leafletMap.latLngToLayerPoint(stopNode._latlng);
+
+               var matrix = rotation.layer.transform._matrix;
+               var transformedPoint = matrix.transform(stopNodePoint);
+               var transformedLatLng = leafletMap.layerPointToLatLng(transformedPoint);
+
+               stopNode.setLatLng(transformedLatLng);
+            });
+        });
+        selectionAreaPolygon.on('drag', function (event) {
+            console.log(event);
+        });
+    });
+}
+
+function getSelectedStopNodes(selectionEvent) {
+    var selectedStopNodes = [];
+    stopsLayer.eachLayer(function (stopNode) {
+        if (selectionEvent.bounds.contains(stopNode.getLatLng())) {
+            selectedStopNodes.push(stopNode);
+        }
+    });
+
+    return selectedStopNodes;
+}
+
+function createFeatureGroup() {
+    return new L.geoJSON({draggable: true, transform: true});
+}
+
+function createPolygonFromBounds(latLngBounds) {
+  var polygon =  new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
+      latLngBounds.getSouthEast(), latLngBounds.getSouthWest()], {draggable: true, transform: true});
+  return polygon;
+}
+
+function updateStopsHighlight(selectionEvent) {
+    if (selectionEvent === null) {
+        // Remove highlighting of all stop nodes
+        stopsLayer.eachLayer(function (stopNode) {
+            setHighlight(stopNode, false);
+        });
+    } else {
+        // Highlight nodes that are inside the selection bounds
+        L.Util.requestAnimFrame(function () {
+            stopsLayer.eachLayer(function (stopNode) {
+                setHighlight(stopNode, selectionEvent.bounds.contains(stopNode.getLatLng()));
+            }) ;
+        });
+    }
+}
+
+function setHighlight(stopNode, highlighted) {
+    stopNode.setStyle({
+        color: highlighted ? 'red' : '#000000',
+        weight: highlighted ? 2 : 1
     });
 }
 
@@ -54,9 +115,9 @@ function removeSelectedAreaPolygon() {
 
 function disableStopMovement() {
     //noinspection EqualityComparisonWithCoercionJS
-    if (selectionAreaPolygon != null) {
-        removeSelectedAreaPolygon();
-    }
+    // if (selectionAreaPolygon != null) {
+    //     removeSelectedAreaPolygon();
+    // }
     disableAreaSelect();
 }
 
@@ -88,36 +149,6 @@ function enableAreaSelect(callback) {
 
     leafletMap.selectArea.setControlKey(false);
     console.log("stopmanagement.js:enableAreaSelect: Area selection by dragging the mouse enabled");
-}
-
-
-function createPolygonFromBounds(latLngBounds) {
-  var polygon =  new L.polygon([latLngBounds.getNorthWest(), latLngBounds.getNorthEast(),
-      latLngBounds.getSouthEast(), latLngBounds.getSouthWest()], {draggable: true, transform: true});
-  return polygon;
-}
-
-function updateStopsHighlight(selectionEvent) {
-    if (selectionEvent === null) {
-        // Remove highlighting of all stop nodes
-        stopsLayer.eachLayer(function (stopNode) {
-            setHighlight(stopNode, false);
-        });
-    } else {
-        // Highlight nodes that are inside the selection bounds
-        L.Util.requestAnimFrame(function () {
-            stopsLayer.eachLayer(function (stopNode) {
-                setHighlight(stopNode, selectionEvent.bounds.contains(stopNode.getLatLng()));
-            }) ;
-        });
-    }
-}
-
-function setHighlight(stopNode, highlighted) {
-    stopNode.setStyle({
-        color: highlighted ? 'red' : '#000000',
-        weight: highlighted ? 2 : 1
-    });
 }
 
 function disableAreaSelect() {

@@ -1,3 +1,6 @@
+// Global variable where the location geometry layer instance will be stored
+var locationBoundaryLayer;
+
 $(document).ready(function () {
     console.log("location.js: document is ready");
 });
