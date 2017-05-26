@@ -3,7 +3,7 @@
     var stopLayoutDialogSettings = [
         {
             "name": "LATTICE",
-            "content": "{% filter escapejs %}{% include 'stopgenerator/lattice_layout_dialog.html' %}{% endfilter %}",
+            "content": "{% filter escapejs %}{% include 'stopgenerator/layoutdialogs/lattice_layout_dialog.html' %}{% endfilter %}",
             "options": {
                 "size": [500, 300],
                 "anchor": [150, 225],
@@ -12,7 +12,7 @@
         },
         {
             "name": "RANDOM",
-            "content": "{% filter escapejs %}{% include 'stopgenerator/random_layout_dialog.html' %}{% endfilter %}",
+            "content": "{% filter escapejs %}{% include 'stopgenerator/layoutdialogs/random_layout_dialog.html' %}{% endfilter %}",
             "options": {
                 "size": [500, 215],
                 "anchor": [200, 225],
@@ -21,7 +21,7 @@
         },
         {
             "name": "N-BLOB",
-            "content": "{% filter escapejs %}{% include 'stopgenerator/nblob_layout_dialog.html' %}{% endfilter %}",
+            "content": "{% filter escapejs %}{% include 'stopgenerator/layoutdialogs/nblob_layout_dialog.html' %}{% endfilter %}",
             "options": {
                 "size": [500, 300],
                 "anchor": [150, 225],
@@ -29,6 +29,17 @@
             }
         }
     ];
+
+    var moveStopDialogSettings = {
+        "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/move_stops_dialog.html' %}{% endfilter %}",
+        "options": {
+            "size": [200, 60],
+            "anchor": [10, -210],
+            "position": "topright",
+            "maxSize": [200, 60]
+
+        }
+    };
 </script>
 <form class="pure-form pure-form-stacked">
     <fieldset>

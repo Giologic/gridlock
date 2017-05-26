@@ -19,17 +19,10 @@ function initializeStopLayouts() {
 }
 
 function showStopLayoutDialog(settings) {
-    //noinspection EqualityComparisonWithCoercionJS
-    if (activeDialog != null) {
-        activeDialog.remove(leafletMap);
-    }
-
-    activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
-    activeDialog.layoutType = settings["name"];
-    activeDialog.open();
-
-    setupDialogGenerateButton();
-    setupDialogCheckboxes();
+    showDialog(settings, function () {
+        setupDialogGenerateButton();
+        setupDialogCheckboxes();
+    });
 }
 
 function setupDialogGenerateButton() {
@@ -44,7 +37,7 @@ function setupDialogGenerateButton() {
         } else if (activeDialog.layoutType === "N-BLOB") {
             setupNBlobLayoutConfig(layoutConfig);
         } else {
-           throw "Active dialog has an invalid layout type.";
+           throw "Active dialog has an invalid layoutdialogs type.";
         }
     });
 }
@@ -63,7 +56,7 @@ function setupLatticeLayoutConfig(layoutConfig) {
     }
 
     generateStops(layoutConfig, displayStopNodes);
-    console.log("stoplayout.js:setupLatticeLayoutConfig: generation of lattice layout started");
+    console.log("stoplayout.js:setupLatticeLayoutConfig: generation of lattice layoutdialogs started");
 }
 
 function setupLayoutBaseConfig(layoutConfig) {
@@ -103,7 +96,7 @@ function setupRandomLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "RANDOM";
     generateStops(layoutConfig, displayStopNodes);
-    console.log("stoplayout.js:setupRandomLayoutConfig: generation of random layout started");
+    console.log("stoplayout.js:setupRandomLayoutConfig: generation of random layoutdialogs started");
 }
 
 function setupNBlobLayoutConfig(layoutConfig) {
@@ -115,14 +108,14 @@ function setupNBlobLayoutConfig(layoutConfig) {
             function(loc_recommended_predefined_means_json) {
                 layoutConfig.predefined_means = loc_recommended_predefined_means_json;
                 generateStops(layoutConfig, displayStopNodes);
-                console.log("stoplayout.js:setupNBlobLayoutConfig: generation of n-blob layout " +
+                console.log("stoplayout.js:setupNBlobLayoutConfig: generation of n-blob layoutdialogs " +
                     "using recommended predefined means started");
             }
         );
     } else {
         layoutConfig.predefined_means = '[' + $('#predefined-means-field').val() + ']';
         generateStops(layoutConfig, displayStopNodes);
-        console.log("stoplayout.js:setupNBlobLayoutConfig: generation of n-blob layout " +
+        console.log("stoplayout.js:setupNBlobLayoutConfig: generation of n-blob layoutdialogs " +
                     "using manually entered predefined means started");
     }
 }

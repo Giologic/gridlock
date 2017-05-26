@@ -7674,7 +7674,7 @@ L.DivOverlay = L.Layer.extend({
 	},
 
 	// @method update: null
-	// Updates the popup content, layout and position. Useful for updating the popup after something inside changed, e.g. image loaded.
+	// Updates the popup content, layoutdialogs and position. Useful for updating the popup after something inside changed, e.g. image loaded.
 	update: function () {
 		if (!this._map) { return; }
 
@@ -8191,7 +8191,7 @@ L.Layer.include({
 			// set popup source to this layer
 			this._popup._source = layer;
 
-			// update the popup (content, layout, ect...)
+			// update the popup (content, layoutdialogs, ect...)
 			this._popup.update();
 
 			// open the popup on the map
@@ -8606,7 +8606,7 @@ L.Layer.include({
 			// set tooltip source to this layer
 			this._tooltip._source = layer;
 
-			// update the tooltip (content, layout, ect...)
+			// update the tooltip (content, layoutdialogs, ect...)
 			this._tooltip.update();
 
 			// open the tooltip on the map

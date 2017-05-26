@@ -11,14 +11,17 @@ function enableStopMovement() {
 
         var selectedStopNodes = getSelectedStopNodes(selectionEvent);
         highlightStopNodes(selectedStopNodes);
+        addMovementControls(selectedStopNodes);
+        disableAreaSelect();
+    });
 
-        if (!isSelectionEmpty(selectedStopNodes)) {
-            // Zoom-in if necessary to fix unsolved lattice rotation bug
-            if (numberOfStopNodes(selectedStopNodes) > 1) {
-                leafletMap.fitBounds(selectedStopNodes.getBounds().pad(1 / 4));
-            }
-            addSelectedAreaPolygon(selectedStopNodes.getBounds(), selectedStopNodes);
-        }
+    showDialog(moveStopDialogSettings, function () {
+        console.log("stopmove.js: move-stops-dialog-clear-selection-btn clicked");
+        $('#move-stops-dialog-clear-selection-btn').click(function () {
+            enableStopMovement();
+            removeSelectedAreaPolygon();
+            removeHighLightStopNodes(stopsLayer);
+        });
     });
 }
 
@@ -27,6 +30,16 @@ function removeSelectedAreaPolygon() {
     selectionAreaPolygon.transform.disable();
     leafletMap.removeLayer(selectionAreaPolygon);
     selectionAreaPolygon = null;
+}
+
+function addMovementControls(selectedStopNodes) {
+    if (!isSelectionEmpty(selectedStopNodes)) {
+        // Zoom-in if necessary to fix unsolved lattice rotation bug
+        if (numberOfStopNodes(selectedStopNodes) > 1) {
+            leafletMap.fitBounds(selectedStopNodes.getBounds().pad(0.25));
+        }
+        addSelectedAreaPolygon(selectedStopNodes.getBounds(), selectedStopNodes);
+    }
 }
 
 function isSelectionEmpty(selectedStopNodes) {
@@ -90,9 +103,9 @@ function createPolygonFromBounds(latLngBounds) {
 
 function disableStopMovement() {
     //noinspection EqualityComparisonWithCoercionJS
-    // if (selectionAreaPolygon != null) {
-    //     removeSelectedAreaPolygon();
-    // }
+    if (selectionAreaPolygon != null) {
+        removeSelectedAreaPolygon();
+    }
     disableAreaSelect();
     removeHighLightStopNodes(stopsLayer);
 }

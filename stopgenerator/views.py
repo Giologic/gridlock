@@ -26,7 +26,7 @@ def generate_stop_layout(request):
         elif layout_type == 'N-BLOB':
             stop_layout_nodes = generate_nblob(request, max_num_stops, max_walking_dist)
         else:
-            raise ValueError("Invalid stop layout type")
+            raise ValueError("Invalid stop layoutdialogs type")
 
         return JsonResponse({'stop_layout_nodes': [n.__dict__ for n in stop_layout_nodes]})
 

@@ -9,7 +9,7 @@ define( [
 
 ( function() {
 
-	// Executing both pixelPosition & boxSizingReliable tests require only one layout
+	// Executing both pixelPosition & boxSizingReliable tests require only one layoutdialogs
 	// so they're executed at the same time to save the second computation.
 	function computeStyleTests() {
 
