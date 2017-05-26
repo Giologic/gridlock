@@ -12,14 +12,18 @@ $(document).ready(function () {
 });
 
 function showDialog(settings, callback) {
-    //noinspection EqualityComparisonWithCoercionJS
-    if (activeDialog != null) {
-        activeDialog.remove(leafletMap);
-    }
-
+    removeActiveDialog();
     activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
     activeDialog.layoutType = settings["name"];
     activeDialog.open();
 
     callback();
+}
+
+
+function removeActiveDialog() {
+    //noinspection EqualityComparisonWithCoercionJS
+    if (activeDialog != null) {
+        activeDialog.remove(leafletMap);
+    }
 }

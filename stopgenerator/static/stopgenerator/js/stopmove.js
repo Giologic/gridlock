@@ -108,4 +108,5 @@ function disableStopMovement() {
     }
     disableAreaSelect();
     removeHighLightStopNodes(stopsLayer);
+    removeActiveDialog();
 }
