@@ -43,15 +43,25 @@ function addSelectedAreaPolygon(bounds, selectedStopNodes) {
     selectionAreaPolygon.transform.enable({scaling: false});
 
     selectionAreaPolygon.on('rotate', function (rotation) {
-        selectedStopNodes.eachLayer(function (stopNode) {
-            var matrix = rotation.layer.transform._matrix;
-            var transformedPoint = matrix.transform(stopNode._point);
-            stopNode.setLatLng(leafletMap.layerPointToLatLng(transformedPoint));
-        });
+        transformStopNodes(selectedStopNodes, rotation.layer.transform._matrix);
     });
 
     selectionAreaPolygon.on('drag', function (event) {
-        console.log(event);
+        translateStopNodes(selectedStopNodes, event.movementX, event.movementY);
+    });
+}
+
+function transformStopNodes(stopNodes, transformMatrix) {
+    stopNodes.eachLayer(function (n) {
+        var transformedPoint = transformMatrix.transform(n._point);
+        n.setLatLng(leafletMap.layerPointToLatLng(transformedPoint));
+    });
+}
+
+function translateStopNodes(stopNodes, xTranslate, yTranslate) {
+    stopNodes.eachLayer(function (n) {
+        var translatedPoint = L.point(n._point.x + xTranslate, n._point.y + yTranslate);
+        n.setLatLng(leafletMap.layerPointToLatLng(translatedPoint));
     });
 }
 

@@ -22,7 +22,8 @@ function initializeStopManagement() {
 
     deleteStopsButton.click(function () {
         console.log("stopmanagement.js: delete-stops-btn clicked");
-        toggleButtonActive(deleteStopsButton, [addStopsButton, moveStopsButton], enableStopDeletion, disableStopDeletion);
+        toggleButtonActive(deleteStopsButton, [addStopsButton, moveStopsButton],
+            enableStopDeletion, disableStopDeletion);
     });
 }
 
@@ -59,13 +60,11 @@ function enableAreaSelect(callback) {
     console.log("stopmanagement.js:enableAreaSelect: Area selection by dragging the mouse enabled");
 }
 
-
 function disableAreaSelect() {
     leafletMap.off('areaselected');
     leafletMap.selectArea.disable();
     console.log("stopmanagement.js:disableAreaSelect: Area selection by dragging the mouse disabled");
 }
-
 
 function getSelectedStopNodes(selectionEvent) {
     var selectedStopNodes = L.featureGroup();
