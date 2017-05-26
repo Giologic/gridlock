@@ -49,10 +49,6 @@ function isSelectionEmpty(selectedStopNodes) {
     return Object.keys(selectedStopNodes.getBounds()).length <= 0;
 }
 
-function numberOfStopNodes(stopNodes) {
-    return stopNodes.getLayers().length;
-}
-
 function addSelectedAreaPolygon(bounds, selectedStopNodes) {
     selectionAreaPolygon = createPolygonFromBounds(bounds);
     selectionAreaPolygon.addTo(leafletMap);

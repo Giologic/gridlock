@@ -30,6 +30,16 @@
         }
     ];
 
+    var stopCountDialogSettings = {
+        "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/stop_count_dialog.html' %}{% endfilter %}",
+        "options": {
+            "size": [200, 60],
+            "anchor": [-70, 0],
+            "position": "bottomright",
+            "maxSize": [200, 60]
+
+        }
+    };
     var addStopDialogSettings = {
         "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/add_stops_dialog.html' %}{% endfilter %}",
         "options": {

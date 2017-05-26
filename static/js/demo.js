@@ -7,6 +7,7 @@ $(document).ready(function () {
     initializeLocations();
 
     initializeStopsLayer();
+    initializeStopCount();
     initializeStopLayouts();
     initializeStopManagement();
 });
@@ -16,7 +17,12 @@ function showDialog(settings, callback) {
     activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
     activeDialog.layoutType = settings["name"];
     activeDialog.open();
+    callback();
+}
 
+function showPermanentDialog(settings, callback) {
+    var dialog  = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);
+    dialog.open();
     callback();
 }
 

@@ -2,7 +2,20 @@ var selectionAreaPolygon;
 
 $(document).ready(function () {
     console.log("stopmanagement.js: document is ready");
+
 });
+
+function initializeStopCount() {
+    showPermanentDialog(stopCountDialogSettings, updateStopCount);
+}
+
+function updateStopCount() {
+    $('#current-stop-count').text(numberOfStopNodes(stopsLayer) + " Stops");
+}
+
+function numberOfStopNodes(stopNodes) {
+    return stopNodes.getLayers().length;
+}
 
 function initializeStopManagement() {
     var addStopsButton = $("#add-stops-button");

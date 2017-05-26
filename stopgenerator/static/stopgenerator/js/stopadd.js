@@ -5,6 +5,7 @@ $(document).ready(function () {
 function enableStopAdding() {
     leafletMap.on('click', function(e){
         addStopNodeMarker(e.latlng, $("#add-stops-dialog-stop-color-field").val());
+        updateStopCount();
     });
 
     showDialog(addStopDialogSettings, function () {});
@@ -22,7 +23,7 @@ function addStopNodeMarker(latLng, selectedColor) {
         color: "#000000", // stop outline color
         weight: 1,
         opacity: 1,
-        fillOpacity: 0.8,
+        fillOpacity: 0.8
     };
 
     var stopNodeMarker = L.circleMarker(latLng, style);

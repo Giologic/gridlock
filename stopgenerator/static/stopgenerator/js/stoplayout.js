@@ -80,6 +80,7 @@ function displayStopNodes(stopLayoutNodes, selectedColor) {
         var latLng = L.latLng(coord[0], coord[1]);
         addStopNodeMarker(latLng, selectedColor);
     });
+    updateStopCount();
 }
 
 function setupRandomLayoutConfig(layoutConfig) {

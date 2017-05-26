@@ -14,11 +14,13 @@ function enableStopDeletion() {
         $('#remove-stops-dialog-remove-selected-btn').click(function () {
             console.log("stopremove.js: remove-stops-dialog-remove-selected-btn clicked");
             removeStopNodes(selectedStopNodes);
+            updateStopCount();
         });
 
         $('#remove-stops-dialog-remove-all-btn').click(function () {
             console.log("stopremove.js: remove-stops-dialog-remove-all-btn clicked");
             removeStopNodes(stopsLayer);
+            updateStopCount();
         });
     });
 }
