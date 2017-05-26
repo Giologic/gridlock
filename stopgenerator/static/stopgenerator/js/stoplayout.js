@@ -75,20 +75,10 @@ function generateStops(layoutConfig, callback) {
 }
 
 function displayStopNodes(stopLayoutNodes, selectedColor) {
-    var style = {
-        radius: 5,
-        fillColor: selectedColor,
-        color: "#000000", // stop outline color
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8,
-    };
-
     stopLayoutNodes.forEach(function(node) {
         var coord = node['latlng'];
         var latLng = L.latLng(coord[0], coord[1]);
-        var stopNodeMarker = L.circleMarker(latLng, style);
-        stopsLayer.addLayer(stopNodeMarker);
+        addStopNodeMarker(latLng, selectedColor);
     });
 }
 

@@ -30,6 +30,16 @@
         }
     ];
 
+    var addStopDialogSettings = {
+        "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/add_stops_dialog.html' %}{% endfilter %}",
+        "options": {
+            "size": [200, 60],
+            "anchor": [10, -210],
+            "position": "topright",
+            "maxSize": [200, 60]
+
+        }
+    };
     var moveStopDialogSettings = {
         "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/move_stops_dialog.html' %}{% endfilter %}",
         "options": {
@@ -40,7 +50,6 @@
 
         }
     };
-
     var removeStopDialogSettings = {
         "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/remove_stops_dialog.html' %}{% endfilter %}",
         "options": {

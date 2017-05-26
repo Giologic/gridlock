@@ -11,7 +11,8 @@ function initializeStopManagement() {
 
     addStopsButton.click(function () {
         console.log('stopmanagement.js: add-stops-btn clicked');
-        toggleButtonActive(addStopsButton, [moveStopsButton, deleteStopsButton]);
+        toggleButtonActive(addStopsButton, [moveStopsButton, deleteStopsButton],
+            enableStopAdding, disableStopAdding);
     });
 
     moveStopsButton.click(function () {

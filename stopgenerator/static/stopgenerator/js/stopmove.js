@@ -26,10 +26,13 @@ function enableStopMovement() {
 }
 
 function removeSelectedAreaPolygon() {
-    selectionAreaPolygon.dragging.disable();
-    selectionAreaPolygon.transform.disable();
-    leafletMap.removeLayer(selectionAreaPolygon);
-    selectionAreaPolygon = null;
+    //noinspection EqualityComparisonWithCoercionJS
+    if (selectionAreaPolygon != null) {
+        selectionAreaPolygon.dragging.disable();
+        selectionAreaPolygon.transform.disable();
+        leafletMap.removeLayer(selectionAreaPolygon);
+        selectionAreaPolygon = null;
+    }
 }
 
 function addMovementControls(selectedStopNodes) {
