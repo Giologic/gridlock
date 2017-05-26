@@ -3,15 +3,17 @@ $(document).ready(function() {
 });
 
 function enableStopDeletion() {
+    var selectedStopNodes = null;
     enableAreaSelect(function(selectionEvent) {
-        var selectedStopNodes = getSelectedStopNodes(selectionEvent);
+        removeHighLightStopNodes(stopsLayer);
+        selectedStopNodes = getSelectedStopNodes(selectionEvent);
         highlightStopNodes(selectedStopNodes);
     });
 
     showDialog(removeStopDialogSettings, function() {
         $('#remove-stops-dialog-remove-selected-btn').click(function () {
             console.log("stopremove.js: remove-stops-dialog-remove-selected-btn clicked");
-
+            removeStopNodes(selectedStopNodes);
         });
 
         $('#remove-stops-dialog-remove-all-btn').click(function () {
@@ -22,9 +24,11 @@ function enableStopDeletion() {
 }
 
 function removeStopNodes(stopNodes) {
-    stopNodes.eachLayer(function (n) {
-       stopsLayer.removeLayer(n);
-    });
+    if (stopNodes !== null) {
+        stopNodes.eachLayer(function (n) {
+           stopsLayer.removeLayer(n);
+        });
+    }
 }
 
 function disableStopDeletion() {
