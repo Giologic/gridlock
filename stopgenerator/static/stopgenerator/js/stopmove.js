@@ -16,8 +16,8 @@ function enableStopMovement() {
     });
 
     showDialog(moveStopDialogSettings, function () {
-        console.log("stopmove.js: move-stops-dialog-clear-selection-btn clicked");
         $('#move-stops-dialog-clear-selection-btn').click(function () {
+            console.log("stopmove.js: move-stops-dialog-clear-selection-btn clicked");
             enableStopMovement();
             removeSelectedAreaPolygon();
             removeHighLightStopNodes(stopsLayer);

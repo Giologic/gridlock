@@ -40,6 +40,16 @@
 
         }
     };
+
+    var removeStopDialogSettings = {
+        "content": "{% filter escapejs %}{% include 'stopgenerator/managedialogs/remove_stops_dialog.html' %}{% endfilter %}",
+        "options": {
+            "size": [200, 110],
+            "anchor": [10, -210],
+            "position": "topright",
+            "maxSize": [200, 110]
+        }
+    };
 </script>
 <form class="pure-form pure-form-stacked">
     <fieldset>
