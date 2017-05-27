@@ -27,6 +27,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),  # For static assets not tied to a particular app
     os.path.join(BASE_DIR, 'preprocessor', 'static'),  # Static assets for the preprocessor app
     os.path.join(BASE_DIR, 'stopgenerator', 'static'),  # Static assets for the stopgenerator app
+    os.path.join(BASE_DIR, 'routegenerator', 'static'),  # Static assets for the routegenerator app
 )
 
 STATICFILES_FINDERS = [
@@ -94,6 +95,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),  # For templates not tied to a particular app
             os.path.join(BASE_DIR, 'preprocessor', 'templates'),  # Templates for the preprocessor app
             os.path.join(BASE_DIR, 'stopgenerator', 'templates'),  # Templates for the stopgenerator app
+            os.path.join(BASE_DIR, 'routegenerator', 'templates'),  # Templates for the routegenerator app
         ],
         'APP_DIRS': True,
         'OPTIONS': {
