@@ -10,6 +10,8 @@ $(document).ready(function () {
     initializeStopCount();
     initializeStopLayouts();
     initializeStopManagement();
+
+    initializeRoutesLayer();
 });
 
 function showDialog(settings, callback) {
@@ -25,7 +27,6 @@ function showPermanentDialog(settings, callback) {
     dialog.open();
     callback();
 }
-
 
 function removeActiveDialog() {
     //noinspection EqualityComparisonWithCoercionJS

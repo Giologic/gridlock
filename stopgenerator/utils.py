@@ -18,3 +18,10 @@ class StopNode(object):
     def __init__(self, node_id, latlng):
         self.node_id = node_id
         self.latlng = latlng
+        self.enabled = True
+
+    def enable(self):
+        self.enabled = True
+
+    def disable(self):
+        self.enabled = False
