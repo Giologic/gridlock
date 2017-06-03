@@ -6,7 +6,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/precise64"
+  config.vm.box = "gda/ubuncomput1404"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -62,6 +62,9 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
 
+    # Install Fish Shell
+    sudo apt-get install fish
+
     # Install PostgreSQL database
     sudo apt-get install -y postgresql postgresql-contrib
 
@@ -71,14 +74,7 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y git
     sudo npm install -g bower
 
-    # Install Python 2.7
-    sudo apt-get install -y python
-    sudo apt-get install -y python-pip
-    sudo apt-get install -y python-dev
-    sudo pip install --upgrade distribute
-    sudo pip install setuptools==7.0
-
     # Install project requirements
-    sudo pip install -r /vagrant/requirements.txt
+    sudo -H pip install -r /vagrant/requirements.txt
   SHELL
 end
