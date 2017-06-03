@@ -34,7 +34,6 @@ function displayRouteNetwork(routeNetwork) {
     routeNetwork.forEach(function(route) {
         routesLayer.addLayer(createPolyline(route));
     });
-
 }
 
 function createPolyline(route) {

@@ -17,3 +17,10 @@ def generate_route_network(request):
     route_network = computations.generate_route_network(stop_nodes, 350, 10)
 
     return JsonResponse({'route_network': dumps(route_network)})
+
+
+@csrf_exempt
+def generate_route(request):
+    stop_node_coordinates = json.loads(request.POST['stop_node_coordinates'])
+    stop_nodes = convert_latlng_to_stop_nodes(stop_node_coordinates)
+    route = computations.generate_route()
