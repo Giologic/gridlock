@@ -14,6 +14,12 @@ $(document).ready(function () {
     initializeRoutesLayer();
 });
 
+function showErrorDialog(errorMessage) {
+    showDialog(errorDialogSettings, function () {
+        $('#error-message-field').text(errorMessage);
+    });
+}
+
 function showDialog(settings, callback) {
     removeActiveDialog();
     activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);

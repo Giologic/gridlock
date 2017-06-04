@@ -19,6 +19,16 @@
     <script type="text/javascript" src="{% static 'routegenerator/js/routegeneration.js' %}"></script>
     <!-- Application -->
     <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
+    <!--suppress JSUnusedLocalSymbols -->
+    <script type="text/javascript">
+        var errorDialogSettings = {
+            "content": "{% filter escapejs %}{% include 'dialogs/error_dialog.html' %}{% endfilter %}",
+            "options": {
+                "size": [300, 200],
+                "anchor": [275, 275]
+            }
+        };
+    </script>
 {% endblock %}
 
 {% block body %}

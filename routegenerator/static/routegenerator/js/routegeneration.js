@@ -11,7 +11,12 @@ function initializeRoutesLayer() {
 
     $("#generate-routes-btn").click(function () {
         console.log("routegeneration.js: generate-routes-btn clicked");
-        generateRouteNetwork();
+        if (numberOfStopNodes(stopsLayer) > 1) {
+            generateRouteNetwork();
+        } else {
+            showErrorDialog("There must be at least 2 stop nodes in order to generate routes." +
+                " Please add more stop nodes.");
+        }
     });
 
     $("#clear-routes-btn").click(function () {
