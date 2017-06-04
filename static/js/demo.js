@@ -20,6 +20,12 @@ function showErrorDialog(errorMessage) {
     });
 }
 
+function showLoadingDialog(loadingMessage) {
+    showDialog(loadingDialogSettings, function () {
+         $('#loading-message-field').text(loadingMessage);
+    });
+}
+
 function showDialog(settings, callback) {
     removeActiveDialog();
     activeDialog = L.control.dialog(settings["options"]).setContent(settings["content"]).addTo(leafletMap);

@@ -12,6 +12,7 @@ function initializeRoutesLayer() {
     $("#generate-routes-btn").click(function () {
         console.log("routegeneration.js: generate-routes-btn clicked");
         if (numberOfStopNodes(stopsLayer) > 1) {
+            showLoadingDialog("The server is generating the routes, please wait a moment.");
             generateRouteNetwork();
         } else {
             showErrorDialog("There must be at least 2 stop nodes in order to generate routes." +
@@ -50,6 +51,7 @@ function generateRouteNetwork() {
         console.log(routeNetwork);
         displayRouteNetwork(routeNetwork);
         snapStopsToRoad(leafletMap, routesLayer, stopsLayer);
+        removeActiveDialog();
     });
 }
 
