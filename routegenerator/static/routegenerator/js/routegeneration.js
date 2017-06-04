@@ -18,6 +18,17 @@ function initializeRoutesLayer() {
        console.log("routegeneration.js: clear-routes-btn clicked");
        clearRoutes();
     });
+
+    var showRoutesCheckbox = $("#show-generated-routes-checkbox");
+    showRoutesCheckbox.change(function () {
+        if (showRoutesCheckbox.is(':checked')) {
+            console.log("routegeneration.js: show-generated-routes-checkbox checked");
+            routesLayer.addTo(leafletMap);
+        } else {
+            console.log("routegeneration.js: show-generated-routes-checkbox unchecked");
+            leafletMap.removeLayer(routesLayer);
+        }
+    });
 }
 
 function generateRouteNetwork() {
