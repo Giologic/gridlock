@@ -13,6 +13,11 @@ function initializeRoutesLayer() {
         console.log("routegeneration.js: generate-routes-btn clicked");
         generateRouteNetwork();
     });
+
+    $("#clear-routes-btn").click(function () {
+       console.log("routegeneration.js: clear-routes-btn clicked");
+       clearRoutes();
+    });
 }
 
 function generateRouteNetwork() {
@@ -63,4 +68,12 @@ function snapStopsToRoad(map, roadFeatureGroup, stopsFeatureGroup) {
         var snapped = L.GeometryUtil.closestLayerSnap(map, roadFeatureGroup.getLayers(), layerLatLng);
         layer.setLatLng(snapped.latlng);
     });
+}
+
+function clearRoutes() {
+    if (routesLayer !== null) {
+        routesLayer.eachLayer(function (r) {
+            routesLayer.removeLayer(r);
+        });
+    };
 }
