@@ -63,7 +63,7 @@ Vagrant.configure("2") do |config|
     sudo apt-get update
 
     # Install Fish Shell
-    sudo apt-get install fish
+    sudo apt-get install -y fish
 
     # Install PostgreSQL database
     sudo apt-get install -y postgresql postgresql-contrib
@@ -75,6 +75,22 @@ Vagrant.configure("2") do |config|
     sudo npm install -g bower
 
     # Install project requirements
+    sudo pip install -U pip
+    sudo apt-get install -y python-matplotlib
+    sudo apt-get install -y python-dev
+    sudo apt-get install -y libgeos-dev
+    sudo apt-get install -y libspatialindex-dev
+
+    # I do not know why, but this fixes errors in other scientific computing libraries
+    sudo apt-get -y install build-essential autoconf libtool pkg-config python-opengl python-imaging python-pyrex python-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3 python-dev libssl-dev
+    sudo easy_install -y greenlet
+    sudo easy_install -y gevent
+    sudo apt-get install -y build-essential libssl-dev libffi-dev python-dev
+    sudo -H pip install --upgrade urllib3
+    sudo -H pip install --upgrade chardet
+
+
+
     sudo -H pip install -r /vagrant/requirements.txt
   SHELL
 end

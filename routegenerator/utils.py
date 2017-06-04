@@ -18,3 +18,9 @@ def euclidean(x, y):
         sum_squared += (x[i] - y[i]) ** 2
 
     return sum_squared ** 0.5
+
+
+class RoadNode(object):
+    def __init__(self, data):
+        self.uuid = data['osmid']
+        self.latlng = [data['y'], data['x']]

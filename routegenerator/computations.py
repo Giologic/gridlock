@@ -17,6 +17,7 @@ def generate_route_network(stop_nodes, max_walking_dist, num_generations):
     for i in range(num_generations):
         print("GENERATING ROUTE: " + str(count))
         count += 1
+        # route_network[count] = generate_route(stop_nodes, stop_nodes_kd_tree, max_walking_dist, count)
         route_network.append(generate_route(stop_nodes, stop_nodes_kd_tree, max_walking_dist))
 
     return route_network

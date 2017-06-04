@@ -15,13 +15,15 @@ def get_location_bounds(location_geometry):
 
 
 class StopNode(object):
-    def __init__(self, node_id, latlng):
-        self.node_id = node_id
+    def __init__(self, uuid, latlng):
+        self.uuid = uuid
         self.latlng = latlng
         self.enabled = True
+        self.route_id = None
 
     def enable(self):
         self.enabled = True
 
     def disable(self):
         self.enabled = False
+
