@@ -12,18 +12,20 @@ def generate_route_network(stop_nodes, max_walking_dist, num_generations):
     # k-dimensional tree is built only once per route for optimization
     stop_node_coordinates = [n.latlng for n in stop_nodes]
     stop_nodes_kd_tree = KDTree(stop_node_coordinates)
+    possible_start_nodes = [x for x in stop_nodes]
 
     route_network = []
     for i in range(num_generations):
-        route_network.append(generate_route(stop_nodes, stop_nodes_kd_tree, max_walking_dist))
+        route_network.append(generate_route(stop_nodes, possible_start_nodes, stop_nodes_kd_tree, max_walking_dist))
 
     return route_network
 
 
-def generate_route(stop_nodes, stop_nodes_kd_tree, max_walking_dist):
+def generate_route(stop_nodes, possible_start_nodes, stop_nodes_kd_tree, max_walking_dist):
     route = []
     enable_stop_nodes(stop_nodes)
-    selected_node = random.choice(stop_nodes)
+    selected_node = random.choice(possible_start_nodes)
+    possible_start_nodes.remove(selected_node)
 
     while not all_nodes_disabled(stop_nodes):
         route.append(selected_node)
