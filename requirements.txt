@@ -1,3 +1,4 @@
+json_tricks
 Django==1.11
 Landscape-Client==14.12
 PAM==0.4.2

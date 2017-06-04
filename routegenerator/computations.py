@@ -4,7 +4,8 @@ import math
 import random
 
 from scipy.spatial import KDTree
-from .utils import all_nodes_disabled, euclidean, enable_stop_nodes, get_num_disabled
+from scipy.spatial.distance import euclidean
+from stopgenerator.utils import all_nodes_disabled, enable_stop_nodes
 
 
 def generate_route_network(stop_nodes, max_walking_dist, num_generations):
@@ -13,11 +14,7 @@ def generate_route_network(stop_nodes, max_walking_dist, num_generations):
     stop_nodes_kd_tree = KDTree(stop_node_coordinates)
 
     route_network = []
-    count = 1
     for i in range(num_generations):
-        print("GENERATING ROUTE: " + str(count))
-        count += 1
-        # route_network[count] = generate_route(stop_nodes, stop_nodes_kd_tree, max_walking_dist, count)
         route_network.append(generate_route(stop_nodes, stop_nodes_kd_tree, max_walking_dist))
 
     return route_network
@@ -59,6 +56,3 @@ def get_surrounding_node_with_highest_edge_probability(source_node, surrounding_
 
 def get_edge_probability(source, destination, normalization_factor):
     return math.exp(-(euclidean(source.latlng, destination.latlng))) / float(normalization_factor)
-
-
-
