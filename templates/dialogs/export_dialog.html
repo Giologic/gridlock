@@ -1,12 +1,21 @@
 <form class="pure-form pure-form-stacked">
     <fieldset>
-        <legend>Import Existing Configuration</legend>
+        <legend>Export Current State</legend>
         <div class="field">
-            <input type="file" id="file-input" />
+            <label for="export-filename-field">File Name</label>
+            <input class="pure-u-24-24" id="export-filename-field" type="text" value="configuration.txt">
+        </div>
+        <div class="field">
+            <label for="loc-center-lattice-start-checkbox" class="pure-checkbox">
+                    <input id="export-routes-checkbox" type="checkbox" checked> Routes
+            </label>
+            <label for="loc-center-lattice-start-checkbox" class="pure-checkbox">
+                    <input id="export-stops-checkbox" type="checkbox" checked> Stops
+            </label>
         </div>
         <br>
         <div class="field">
-            <a class="pure-button pure-button-primary full-width" id="start-import-btn">Start Import</a>
+            <a class="pure-button pure-button-primary full-width" id="start-export-btn">Start Export</a>
         </div>
     </fieldset>
 </form>

@@ -35,16 +35,20 @@
                 "anchor": [275, 275]
             }
         };
-
         var importDialogSettings = {
             "content": "{% filter escapejs %}{% include 'dialogs/import_dialog.html' %}{% endfilter %}",
             "options": {
                 "size": [350, 210],
-                "anchor": [400, 300]
+                "anchor": [275, 275]
             }
         };
-
-        console.log("HEHEHE");
+        var exportDialogSettings = {
+            "content": "{% filter escapejs %}{% include 'dialogs/export_dialog.html' %}{% endfilter %}",
+            "options": {
+                "size": [350, 280],
+                "anchor": [275, 275]
+            }
+        };
     </script>
     <!-- Application -->
     <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
