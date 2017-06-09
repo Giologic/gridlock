@@ -18,6 +18,12 @@ function numberOfStopNodes(stopNodes) {
 }
 
 function initializeStopManagement() {
+    var clearOutsideBoundsButton = $("#clear-outside-bounds-form-button");
+    clearOutsideBoundsButton.click(function () {
+        console.log('stopmanagement.js: clear-outside-bounds-form-button clicked');
+        removeStopsOutsideBounds();
+    });
+
     var addStopsButton = $("#add-stops-button");
     var moveStopsButton = $("#move-stops-button");
     var deleteStopsButton = $("#delete-stops-button");
@@ -38,6 +44,13 @@ function initializeStopManagement() {
         console.log("stopmanagement.js: delete-stops-btn clicked");
         toggleButtonActive(deleteStopsButton, [addStopsButton, moveStopsButton],
             enableStopDeletion, disableStopDeletion);
+    });
+}
+
+function removeStopsOutsideBounds() {
+    console.log(locationBoundaryLayer);
+    stopsLayer.eachLayer(function (stopNode) {
+        // TODO: Implement this
     });
 }
 

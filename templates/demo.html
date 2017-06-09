@@ -17,8 +17,8 @@
     <script type="text/javascript" src="{% static 'stopgenerator/js/stopmove.js' %}"></script>
     <script type="text/javascript" src="{% static 'stopgenerator/js/stopremove.js' %}"></script>
     <script type="text/javascript" src="{% static 'routegenerator/js/routegeneration.js' %}"></script>
-    <!-- Application -->
-    <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
+
+    <!-- General Purpose Dialogs Settings -->
     <!--suppress JSUnusedLocalSymbols -->
     <script type="text/javascript">
         var errorDialogSettings = {
@@ -35,7 +35,20 @@
                 "anchor": [275, 275]
             }
         };
+
+        var importDialogSettings = {
+            "content": "{% filter escapejs %}{% include 'dialogs/import_dialog.html' %}{% endfilter %}",
+            "options": {
+                "size": [350, 210],
+                "anchor": [400, 300]
+            }
+        };
+
+        console.log("HEHEHE");
     </script>
+    <!-- Application -->
+    <script type="text/javascript" src="{% static 'js/demo.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/gtfs.js' %}"></script>
 {% endblock %}
 
 {% block body %}
