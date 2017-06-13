@@ -28,6 +28,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'preprocessor', 'static'),  # Static assets for the preprocessor app
     os.path.join(BASE_DIR, 'stopgenerator', 'static'),  # Static assets for the stopgenerator app
     os.path.join(BASE_DIR, 'routegenerator', 'static'),  # Static assets for the routegenerator app
+    os.path.join(BASE_DIR, 'networkoptimizer', 'static'),  # Static assets for the networkoptimizer app
 )
 
 STATICFILES_FINDERS = [
@@ -96,6 +97,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'preprocessor', 'templates'),  # Templates for the preprocessor app
             os.path.join(BASE_DIR, 'stopgenerator', 'templates'),  # Templates for the stopgenerator app
             os.path.join(BASE_DIR, 'routegenerator', 'templates'),  # Templates for the routegenerator app
+            os.path.join(BASE_DIR, 'networkoptimizer', 'templates'),  # Templates for the networkoptimizer app
         ],
         'APP_DIRS': True,
         'OPTIONS': {

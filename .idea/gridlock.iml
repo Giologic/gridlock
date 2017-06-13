@@ -16,6 +16,7 @@
       <sourceFolder url="file://$MODULE_DIR$/preprocessor" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/stopgenerator" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/routegenerator" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/networkoptimizer" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/.vagrant" />
     </content>
