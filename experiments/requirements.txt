@@ -1,0 +1,4 @@
+pandas==0.20.2
+pytz==2017.2
+numpy==1.13.0
+folium==0.3.0
