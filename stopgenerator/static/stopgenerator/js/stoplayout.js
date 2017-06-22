@@ -86,6 +86,7 @@ function displayStopNodes(stopLayoutNodes, selectedColor) {
 function setupRandomLayoutConfig(layoutConfig) {
     setupLayoutBaseConfig(layoutConfig);
     layoutConfig.layout_type = "RANDOM";
+    layoutConfig.location_pk = $('#location-selection').val();
     generateStops(layoutConfig, displayStopNodes);
     console.log("stoplayout.js:setupRandomLayoutConfig: generation of random layoutdialogs started");
 }

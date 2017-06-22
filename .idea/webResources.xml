@@ -11,6 +11,7 @@
             <path value="file://$PROJECT_DIR$/gridlock/datafiles" />
             <path value="file://$PROJECT_DIR$/stopgenerator/static" />
             <path value="file://$PROJECT_DIR$/routegenerator/static" />
+            <path value="file://$PROJECT_DIR$/networkoptimizer/static" />
           </resourceRoots>
         </entryData>
       </entry>

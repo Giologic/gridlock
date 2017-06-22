@@ -38,7 +38,7 @@ def generate_lattice(request, max_num_stops, max_walking_dist):
 
 
 def generate_random(request, max_num_stops, max_walking_dist):
-    location = get_object_or_None(Location, pk=1)
+    location = get_object_or_None(Location, pk=int(request.POST['location_pk']))
     location_geometry = get_location_geometry(location)
     return RandomLayout(max_num_stops, max_walking_dist, location_geometry).generate()
 

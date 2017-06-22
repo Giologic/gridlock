@@ -31,7 +31,7 @@ def generate_route(stop_nodes, possible_start_nodes, stop_nodes_kd_tree, max_wal
         route.append(selected_node)
         disable_surrounding_nodes(stop_nodes, stop_nodes_kd_tree, selected_node, max_walking_dist / 111111)
         enabled_nodes = [n for n in stop_nodes if n.enabled]
-        selected_node = get_surrounding_node_with_highest_edge_probability(selected_node, enabled_nodes)
+        selected_node = get_enabled_node_with_highest_edge_probability(selected_node, enabled_nodes)
 
     return route
 
@@ -43,7 +43,7 @@ def disable_surrounding_nodes(stop_nodes, stop_nodes_kd_tree, source_node, radiu
         stop_nodes[i].enabled = False
 
 
-def get_surrounding_node_with_highest_edge_probability(source_node, surrounding_nodes):
+def get_enabled_node_with_highest_edge_probability(source_node, surrounding_nodes):
     highest_edge_prob = 0
     highest_edge_prob_node = None
 
