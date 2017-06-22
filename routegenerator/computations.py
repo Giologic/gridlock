@@ -43,12 +43,12 @@ def disable_surrounding_nodes(stop_nodes, stop_nodes_kd_tree, source_node, radiu
         stop_nodes[i].enabled = False
 
 
-def get_enabled_node_with_highest_edge_probability(source_node, surrounding_nodes):
+def get_enabled_node_with_highest_edge_probability(source_node, enabled_nodes):
     highest_edge_prob = 0
     highest_edge_prob_node = None
 
-    for n in surrounding_nodes:
-        edge_prob = get_edge_probability(source_node, n, len(surrounding_nodes))
+    for n in enabled_nodes:
+        edge_prob = get_edge_probability(source_node, n, len(enabled_nodes))
         if edge_prob > highest_edge_prob:
             highest_edge_prob = edge_prob
             highest_edge_prob_node = n
