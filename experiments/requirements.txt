@@ -3,3 +3,5 @@ pytz==2017.2
 numpy==1.13.0
 folium==0.3.0
 randomcolor==0.4.4.4
+networkx==1.11
+matplotlib==2.0.2
