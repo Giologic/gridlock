@@ -6,7 +6,7 @@ import numpy as np
 import operator as op
 
 from vtown.geo.polygon import Polygon
-from .utils import convert_point_to_latlng, convert_latlng_to_stop_nodes, get_location_bounds
+from utils import convert_point_to_latlng, convert_latlng_to_stop_nodes, get_location_bounds
 
 
 class StopLayout(object):
