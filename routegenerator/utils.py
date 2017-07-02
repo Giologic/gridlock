@@ -10,16 +10,55 @@ from stopgenerator.utils import closest_node
 def snap_route_network_to_road(route_network):
     location_road_graph = get_location_road_graph()
     location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
-    snapped_route_network = nx.Graph()
+    snapped_route_network = []
 
     for route in route_network:
         snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
-        snapped_route_network = nx.compose(snapped_route_network, snapped_route)
+        snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
 
-    snapped_route_network = list(snapped_route_network.edges_iter(data='road_path', default=1))
-    snapped_route_network = convert_uuid_routes(location_road_nodes, [x[2] for x in snapped_route_network])
+        snapped_route = []
+        for e in snapped_edges:
+            snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
+
+        # Flatten list of UUID edges
+        # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
+        snapped_route = connect_snapped_edges(snapped_route)
+        snapped_route_network.append(snapped_route)
+
     return snapped_route_network
 
+
+def connect_snapped_edges(snapped_edges):
+    connected_edge = []
+
+    while len(snapped_edges) > 0:
+        curr_edge = []
+        curr_edge = consecutive_connect(curr_edge, snapped_edges.pop(0))
+
+        for e in snapped_edges:
+            consecutive_edge = consecutive_connect(curr_edge, e)
+            if consecutive_edge is not None:
+                curr_edge = consecutive_edge
+                snapped_edges.remove(e)
+
+        new_connected_edge = consecutive_connect(connected_edge, curr_edge)
+        connected_edge = new_connected_edge if new_connected_edge is not None else connected_edge
+
+    return connected_edge
+
+
+def consecutive_connect(e1, e2):
+    if len(e1) == 0:
+        return e2
+    elif len(e2) == 0:
+        return e1
+
+    if e1[len(e1) - 1] == e2[0]:
+        return e1 + e2
+    elif e2[len(e2) - 1] == e1[0]:
+        return e2 + e1
+    else:
+        return None
 
 def snap_route_to_road(location_road_graph, location_road_nodes, route_stop_nodes):
     snapped_route = nx.Graph()
@@ -49,12 +88,8 @@ def get_shortest_road_path(location_road_graph, location_road_nodes, source_stop
         return {}
 
 
-def convert_uuid_routes(nodes, network_uuid_routes):
-    routes = []
-    for uiid_route in network_uuid_routes:
-        routes.append([get_node_with_uuid(nodes, uuid) for uuid in uiid_route])
-
-    return routes
+def convert_uuid_route(nodes, uuid_route):
+    return [get_node_with_uuid(nodes, uuid) for uuid in uuid_route]
 
 
 def get_node_with_uuid(nodes, uuid):
