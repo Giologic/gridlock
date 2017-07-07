@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^preprocessor/', include('preprocessor.urls')),
     url(r'^stopgenerator/', include('stopgenerator.urls')),
     url(r'^routegenerator/', include('routegenerator.urls')),
+    url(r'^networkoptimizer/', include('networkoptimizer.urls')),
 ]

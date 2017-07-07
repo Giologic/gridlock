@@ -7,25 +7,27 @@ from preprocessor.utils import get_location_road_graph
 from stopgenerator.utils import closest_node
 
 
-def snap_route_network_to_road(route_network):
-    location_road_graph = get_location_road_graph()
+def snap_route_network_to_road(route_network, output_graph=False, location_road_graph=None):
+    if location_road_graph is None:
+        location_road_graph = get_location_road_graph()
     location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
+    snapped_route_network_graph = nx.Graph()
     snapped_route_network = []
 
     for route in route_network:
+        print(route)
         snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
+        snapped_route_network_graph = nx.compose(snapped_route_network_graph, snapped_route)
         snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
 
         snapped_route = []
         for e in snapped_edges:
             snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
 
-        # Flatten list of UUID edges
-        # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
         snapped_route = connect_snapped_edges(snapped_route)
         snapped_route_network.append(snapped_route)
 
-    return snapped_route_network
+    return snapped_route_network_graph if output_graph else snapped_route_network
 
 
 def connect_snapped_edges(snapped_edges):
@@ -60,6 +62,7 @@ def consecutive_connect(e1, e2):
     else:
         return None
 
+
 def snap_route_to_road(location_road_graph, location_road_nodes, route_stop_nodes):
     snapped_route = nx.Graph()
     snapped_route.add_node(route_stop_nodes[0].uuid)
@@ -71,10 +74,12 @@ def snap_route_to_road(location_road_graph, location_road_nodes, route_stop_node
     # Add the shortest path for each consecutive node as an edge in the graph
     for i in range(len(route_stop_nodes) - 1):
         source_node = route_stop_nodes[i]
+
         dest_node = route_stop_nodes[i + 1]
         shortest_road_path = get_shortest_road_path(location_road_graph, location_road_nodes, source_node, dest_node)
-        snapped_route.add_edge(source_node.uuid, dest_node.uuid, road_path=shortest_road_path)
-
+        dist = get_total_distance_intersections(location_road_graph,
+                                                source_node.latlng, source_node.latlng, shortest_road_path)
+        snapped_route.add_edge(source_node.uuid, dest_node.uuid, road_path=shortest_road_path, dist=dist)
     return snapped_route
 
 
@@ -87,6 +92,33 @@ def get_shortest_road_path(location_road_graph, location_road_nodes, source_stop
     else:
         return {}
 
+
+def get_total_distance_intersections(map_graph,source_coordinates,dest_coordinates,osm_id_list):
+    distance = 0
+    map_graph_dict = [d for n, d in map_graph.nodes_iter(data=True)]
+    temp_coordinate = (source_coordinates[0],source_coordinates[1])
+    for i in range(0,len(osm_id_list)):
+        for elem in map_graph_dict:
+            if(osm_id_list[i] == elem["osmid"]):
+                print(source_coordinates)
+                print(str((elem["x"],elem["y"])))
+                distance = distance + euclidean(temp_coordinate,(elem["x"],elem["y"]))
+                print(distance)
+                temp_coordinate = (elem["x"],elem["y"])
+
+    distance = distance + euclidean(temp_coordinate,(dest_coordinates[0],dest_coordinates[1]))
+
+    return distance
+
+def euclidean(x, y):
+    sumSq = 0.0
+
+    # add up the squared differences
+    for i in range(len(x)):
+        sumSq += (x[i] - y[i]) ** 2
+
+    # take the square root of the result
+    return (sumSq ** 0.5)
 
 def convert_uuid_route(nodes, uuid_route):
     return [get_node_with_uuid(nodes, uuid) for uuid in uuid_route]

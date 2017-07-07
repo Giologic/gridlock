@@ -67,6 +67,8 @@ INSTALLED_APPS = [
     'django_js_reverse',
     'leaflet',
     'pygeoj',
+    'geopy',
+    'tqdm',
 
     # Project apps
     'preprocessor.apps.PreprocessorConfig',
