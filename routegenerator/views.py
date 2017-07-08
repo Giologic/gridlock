@@ -20,6 +20,7 @@ def generate_route_network(request):
     number_of_generations = int(request.POST['number_of_generations'])
 
     route_network = computations.generate_route_network(stop_nodes, maximum_walking_distance, number_of_generations)
-    snapped_route_network = snap_route_network_to_road(route_network)
-
-    return JsonResponse({'route_network': dumps(snapped_route_network)})
+    snapped_route_network, export_string = snap_route_network_to_road(route_network)
+    print(type(export_string))
+    print(export_string)
+    return JsonResponse({'route_network': dumps(snapped_route_network), 'export_string': export_string})

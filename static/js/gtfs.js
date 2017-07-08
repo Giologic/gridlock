@@ -3,8 +3,6 @@ $(document).ready(function () {
 });
 
 function initializeGtfsManagement() {
-
-
     $('#import-navbar-btn').click(function () {
         console.log("gtfs.js:initialiGtfsManagement: import-navbar-btn clicked");
         showDialog(importDialogSettings, function () {
@@ -41,6 +39,12 @@ function initializeGtfsManagement() {
                 removeActiveDialog();
             });
         });
+    });
+
+    $('#graph-export-navbar-btn').click(function () {
+        console.log(exportStrings);
+        var blob = new Blob([exportStrings], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "exported_graph_data.txt");
     });
 }
 

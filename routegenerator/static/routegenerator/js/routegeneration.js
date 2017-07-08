@@ -1,5 +1,6 @@
 // Global variable where the displayed routes layer will be stored
 var routesLayer;
+var exportStrings;
 
 $(document).ready(function () {
    console.log("routegeneration.js: document is ready");
@@ -47,6 +48,9 @@ function generateRouteNetwork() {
     console.log("routegeneration.js:generateRouteNetwork: generation of routes started");
     $.post(Urls['routegenerator:generate_route_network'](), parameters, function (returnedData) {
         var routeNetwork = JSON.parse(returnedData['route_network']);
+        exportStrings = returnedData['export_string'];
+        console.log(exportStrings);
+
         console.log("routegeneration.js:generateRouteNetwork: response from server received");
         console.log(routeNetwork);
         displayRouteNetwork(routeNetwork);

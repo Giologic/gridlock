@@ -10,23 +10,31 @@ from routegenerator.utils import snap_route_network_to_road
 
 
 def perform_genetic_algorithm(stop_nodes, road_snapped_network,
-                              max_walking_dist, num_evolutions, mutation_probabilities,
+                              max_walking_dist, num_evolutions, num_generated_network_mutations_per_evolution,
+                              route_mutation_probabilities,
                               num_failure_removal, weight_random_failure, weight_targeted_failure, weight_gyration):
     location_road_graph = get_location_road_graph()
 
     for i in range(num_evolutions):
-        num_mutations = np.random.choice(len(mutation_probabilities), 1, mutation_probabilities)[0]
+        num_mutations = np.random.choice(len(route_mutation_probabilities), 1, route_mutation_probabilities)[0]
 
         mutations = []
-        for j in range(num_mutations):
-            mutation_route_network = list(road_snapped_network)
-            new_route_network = generate_route_network(stop_nodes, max_walking_dist, len(road_snapped_network))
-            selected_route_index = np.random.randint(len(road_snapped_network))
-            mutation_route_network[selected_route_index] = new_route_network[selected_route_index]
-            mutation_route_network = snap_route_network_to_road(mutation_route_network, output_graph=True,
-                                                                location_road_graph=location_road_graph)
+        for j in range(num_generated_network_mutations_per_evolution):
+            # if num_mutations > 0 then randomly select n (which is ALSO EQUAL to num_mutations)
+            #  routes to be replaced by a new route
+            # replace the routes with the newly generated routes
+            # append the modified network to the mutations list
+            if num_mutations > 0:
+                mutation_route_network = list(road_snapped_network)
+                new_route_network = generate_route_network(stop_nodes, max_walking_dist, num_mutations)
+                for i in range(0, num_mutations):
+                    selected_route_index = np.random.randint(len(road_snapped_network))
+                    mutation_route_network[selected_route_index] = new_route_network[i]
+                    mutation_route_network = snap_route_network_to_road(mutation_route_network, output_graph=True,
+                                                                    location_road_graph=location_road_graph)
             mutations.append(mutation_route_network)
 
+        # pick the highest scoring mutation among the num_generated_network_mutations_per_evolution
         mutations.append(snap_route_network_to_road(road_snapped_network, output_graph=True))
         road_snapped_network = select_highest_scoring_mutation(mutations, num_failure_removal)
 
@@ -173,8 +181,9 @@ def _get_distance_individual(graph):
     return T
 
 
+# new gettwd does not use weighted adjacency matrix
 def _get_total_weighted_distance(graph, weight):
-    A = _create_weighted_adjacency_matrix(graph)
+    # A = _create_weighted_adjacency_matrix(graph)
     dp = _get_distance_individual(graph)
     w = weight
     total_weighted_distance = 0.0
@@ -185,9 +194,12 @@ def _get_total_weighted_distance(graph, weight):
                 shortest_path_nodes = nx.shortest_path(graph, k_x, k_y)
                 g = get_nodes_shortest_path(shortest_path_nodes, graph)
                 T = _get_no_of_transfers(g)
-            a = float(A[(str(k_x), str(k_y))])
+                a = 1.0
+            elif not nx.has_path(graph, k_x, k_y):
+                a = 10.0
+
             b = float(dp[(str(k_x), str(k_y))])
-            weighted_distance =  a * b + (w * T)
+            weighted_distance = a * b + (w * T)
             total_weighted_distance = float(total_weighted_distance) + float(weighted_distance)
 
     return total_weighted_distance
