@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import networkx as nx
 from preprocessor.utils import get_location_road_graph
 from stopgenerator.utils import closest_node
+from scipy.spatial.distance import euclidean
 
 
 def snap_route_network_to_road(route_network):
@@ -32,8 +33,86 @@ def snap_route_network_to_road(route_network):
 
     return snapped_route_network, prepare_graph_for_export(overall_graph, location_road_nodes)
 
+def create_graph_from_route_network(route_network):
+    location_road_graph = get_location_road_graph()
+    location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
+    snapped_route_network = []
+    overall_graph = nx.Graph()
+
+    route_id = 0
+    for route in route_network:
+        snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
+        nx.set_edge_attributes(snapped_route, 'route_id', route_id)
+        route_id = route_id + 1
+        overall_graph = nx.compose(overall_graph,snapped_route)
+
+        snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
+
+        snapped_route = []
+        for e in snapped_edges:
+            snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
+
+        # Flatten list of UUID edges
+        # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
+        snapped_route = connect_snapped_edges(snapped_route)
+        snapped_route_network.append(snapped_route)
+
+    return prepare_graph_for_network_optimizer_call(overall_graph, location_road_nodes)
 
 def prepare_graph_for_export(graph, location_road_nodes):
+    export_graph = nx.Graph()
+    snapped_edges = list(graph.edges_iter(data='road_path', default=1))
+    for v, inner_d in graph.nodes(data=True):
+        export_graph.add_node(v, inner_d)
+
+    i = 0
+    for edge in graph.edges_iter(data=True):
+        temp_dict = {}
+        temp_dict["route_id"] = edge[2]["route_id"]
+        temp_dict["road_path"] = edge[2]["road_path"]
+
+        latlng_list = []
+        if(len(snapped_edges[i][2]) > 0):
+            for elem in convert_uuid_route(location_road_nodes, snapped_edges[i][2]):
+                latlng_list.append(elem.latlng)
+            temp_dict["lat_long_road_path"] = latlng_list
+            temp_dict["distance"] = get_total_distance_intersections(latlng_list)
+            export_graph.add_edge(edge[0],edge[1],temp_dict)
+
+        i = i + 1
+
+
+    str_graph_output = ""
+    for v, inner_d in export_graph.nodes(data=True):
+        str_graph_output =  str_graph_output + "(" + str(v) + ", " + str(inner_d) + ")\n"
+
+    str_graph_output = str_graph_output + "|\n"
+    for edge in export_graph.edges_iter(data=True):
+        str_graph_output = str_graph_output + str(edge) +"\n"
+
+    text_file = open("Output.txt", "w")
+    text_file.write(str_graph_output)
+    text_file.close()
+
+    return str_graph_output
+
+def get_total_distance_intersections(latlng_list):
+    distance = 0.0
+    flag = False
+    prev_latlng = [0,0]
+    for latlng in latlng_list:
+        if not flag:
+            prev_latlng = latlng
+            flag = True
+        else:
+            distance = distance + euclidean(prev_latlng, latlng)
+            prev_latlng = latlng
+
+    return distance * 111000
+
+
+
+def prepare_graph_for_network_optimizer_call(graph, location_road_nodes):
     export_graph = nx.Graph()
     snapped_edges = list(graph.edges_iter(data='road_path', default=1))
 
@@ -50,16 +129,9 @@ def prepare_graph_for_export(graph, location_road_nodes):
         temp_dict["lat_long_road_path"] = latlng_list
         export_graph.add_edge(edge[0],edge[1],temp_dict)
 
-    str_graph_output = ""
-    for v, inner_d in export_graph.nodes(data=True):
-        str_graph_output = str_graph_output + "(" + str(v) + ", " + str(inner_d) + ")\n"
 
-    str_graph_output = str_graph_output + "|\n"
-    for edge in export_graph.edges_iter(data=True):
-        str_graph_output = str_graph_output + str(edge) + "\n"
 
-    return str_graph_output
-
+    return graph
 
 def connect_snapped_edges(snapped_edges):
     connected_edge = []

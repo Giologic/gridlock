@@ -28,6 +28,7 @@ def generate_stop_layout(request):
         else:
             raise ValueError("Invalid stop layoutdialogs type")
 
+        print(JsonResponse({'stop_layout_nodes': [n.__dict__ for n in stop_layout_nodes]})  )
         return JsonResponse({'stop_layout_nodes': [n.__dict__ for n in stop_layout_nodes]})
 
 
