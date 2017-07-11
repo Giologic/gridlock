@@ -3,10 +3,12 @@ from __future__ import absolute_import, division
 import networkx as nx
 import numpy as np
 import random
+import routegenerator as ru
+
 
 from preprocessor.utils import get_location_road_graph
 from routegenerator.computations import generate_route_network
-from routegenerator.utils import snap_route_network_to_road
+
 
 
 def perform_genetic_algorithm(stop_nodes, road_snapped_network,
@@ -30,12 +32,12 @@ def perform_genetic_algorithm(stop_nodes, road_snapped_network,
                 for i in range(0, num_mutations):
                     selected_route_index = np.random.randint(len(road_snapped_network))
                     mutation_route_network[selected_route_index] = new_route_network[i]
-                    mutation_route_network = snap_route_network_to_road(mutation_route_network, output_graph=True,
+                    mutation_route_network = ru.utils.snap_route_network_to_road(mutation_route_network, output_graph=True,
                                                                     location_road_graph=location_road_graph)
             mutations.append(mutation_route_network)
 
         # pick the highest scoring mutation among the num_generated_network_mutations_per_evolution
-        mutations.append(snap_route_network_to_road(road_snapped_network, output_graph=True))
+        mutations.append(ru.snap_route_network_to_road(road_snapped_network, output_graph=True))
         road_snapped_network = select_highest_scoring_mutation(mutations, num_failure_removal)
 
     return road_snapped_network

@@ -5,6 +5,8 @@ import networkx as nx
 from preprocessor.utils import get_location_road_graph
 from stopgenerator.utils import closest_node
 
+from networkoptimizer.computations import euclidean
+
 
 def snap_route_network_to_road(route_network):
     location_road_graph = get_location_road_graph()
@@ -48,7 +50,8 @@ def prepare_graph_for_export(graph, location_road_nodes):
         for elem in convert_uuid_route(location_road_nodes, snapped_edges[i][2]):
             latlng_list.append(elem.latlng)
         temp_dict["lat_long_road_path"] = latlng_list
-        export_graph.add_edge(edge[0],edge[1],temp_dict)
+        temp_dict["distance"] = get_total_distance_intersections(latlng_list)
+        export_graph.add_edge(edge[0],edge[1], temp_dict)
 
     str_graph_output = ""
     for v, inner_d in export_graph.nodes(data=True):
@@ -59,6 +62,21 @@ def prepare_graph_for_export(graph, location_road_nodes):
         str_graph_output = str_graph_output + str(edge) + "\n"
 
     return str_graph_output
+
+
+def get_total_distance_intersections(latlng_list):
+    distance = 0.0
+    flag = False
+    prev_latlng = [0,0]
+    for latlng in latlng_list:
+        if not flag:
+            prev_latlng = latlng
+            flag = True
+        else:
+            distance = distance + euclidean(prev_latlng, latlng)
+            prev_latlng = latlng
+
+    return distance * 111000
 
 
 def connect_snapped_edges(snapped_edges):
