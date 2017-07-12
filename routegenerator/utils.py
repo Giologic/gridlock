@@ -5,20 +5,25 @@ import networkx as nx
 from preprocessor.utils import get_location_road_graph
 from stopgenerator.utils import closest_node
 from scipy.spatial.distance import euclidean
+import logging
+logging.basicConfig(filename='routegenerator_utils.log', level=logging.DEBUG, format = '%(asctime)s:%(name)s:%(message)s')
 
+def get_location_road_nodes():
+    location_road_graph = get_location_road_graph()
+    return [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
 
 def snap_route_network_to_road(route_network):
     location_road_graph = get_location_road_graph()
     location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
     snapped_route_network = []
-    overall_graph = nx.Graph()
+    list_graphs = []
 
     route_id = 0
     for route in route_network:
         snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
         nx.set_edge_attributes(snapped_route, 'route_id', route_id)
         route_id = route_id + 1
-        overall_graph = nx.compose(overall_graph,snapped_route)
+        list_graphs.append(snapped_route)
 
         snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
 
@@ -31,35 +36,18 @@ def snap_route_network_to_road(route_network):
         snapped_route = connect_snapped_edges(snapped_route)
         snapped_route_network.append(snapped_route)
 
-    return snapped_route_network, prepare_graph_for_export(overall_graph, location_road_nodes)
+        list_graphs_to_string = prepare_graph_for_export_string(merge_list_graphs(list_graphs))
 
-def create_graph_from_route_network(route_network):
-    location_road_graph = get_location_road_graph()
-    location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
-    snapped_route_network = []
-    overall_graph = nx.Graph()
+    return snapped_route_network, list_graphs_to_string, list_graphs
 
-    route_id = 0
-    for route in route_network:
-        snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
-        nx.set_edge_attributes(snapped_route, 'route_id', route_id)
-        route_id = route_id + 1
-        overall_graph = nx.compose(overall_graph,snapped_route)
+def merge_list_graphs(list_graphs):
+    G = nx.Graph()
+    for graphs in list_graphs:
+        G = nx.compose(graphs,G)
+    return G
 
-        snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
-
-        snapped_route = []
-        for e in snapped_edges:
-            snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
-
-        # Flatten list of UUID edges
-        # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
-        snapped_route = connect_snapped_edges(snapped_route)
-        snapped_route_network.append(snapped_route)
-
-    return prepare_graph_for_network_optimizer_call(overall_graph, location_road_nodes)
-
-def prepare_graph_for_export(graph, location_road_nodes):
+def prepare_graph_for_export_string(graph):
+    location_road_nodes = get_location_road_nodes()
     export_graph = nx.Graph()
     snapped_edges = list(graph.edges_iter(data='road_path', default=1))
     for v, inner_d in graph.nodes(data=True):
@@ -90,11 +78,33 @@ def prepare_graph_for_export(graph, location_road_nodes):
     for edge in export_graph.edges_iter(data=True):
         str_graph_output = str_graph_output + str(edge) +"\n"
 
-    text_file = open("Output.txt", "w")
-    text_file.write(str_graph_output)
-    text_file.close()
-
     return str_graph_output
+
+def add_distance_to_graph(graph):
+    location_road_nodes = get_location_road_nodes()
+    export_graph = nx.Graph()
+    snapped_edges = list(graph.edges_iter(data='road_path', default=1))
+    logging.debug("Snapped Edges: {}".format(snapped_edges))
+
+    for v, inner_d in graph.nodes(data=True):
+        export_graph.add_node(v, inner_d)
+
+    i = 0
+    for edge in graph.edges_iter(data=True):
+        temp_dict = {}
+        temp_dict["route_id"] = edge[2]["route_id"]
+        temp_dict["road_path"] = edge[2]["road_path"]
+
+        latlng_list = []
+        if(len(snapped_edges[i][2]) > 0):
+            for elem in convert_uuid_route(location_road_nodes, snapped_edges[i][2]):
+                latlng_list.append(elem.latlng)
+            temp_dict["lat_long_road_path"] = latlng_list
+            temp_dict["distance"] = get_total_distance_intersections(latlng_list)
+            export_graph.add_edge(edge[0],edge[1],temp_dict)
+
+        i = i + 1
+    return export_graph
 
 def get_total_distance_intersections(latlng_list):
     distance = 0.0
@@ -109,29 +119,6 @@ def get_total_distance_intersections(latlng_list):
             prev_latlng = latlng
 
     return distance * 111000
-
-
-
-def prepare_graph_for_network_optimizer_call(graph, location_road_nodes):
-    export_graph = nx.Graph()
-    snapped_edges = list(graph.edges_iter(data='road_path', default=1))
-
-    for v, inner_d in graph.nodes(data=True):
-        export_graph.add_node(v, inner_d)
-
-    i = 0
-    for edge in graph.edges_iter(data=True):
-        temp_dict = {"route_id": edge[2]["route_id"], "road_path": edge[2]["road_path"]}
-
-        latlng_list = []
-        for elem in convert_uuid_route(location_road_nodes, snapped_edges[i][2]):
-            latlng_list.append(elem.latlng)
-        temp_dict["lat_long_road_path"] = latlng_list
-        export_graph.add_edge(edge[0],edge[1],temp_dict)
-
-
-
-    return graph
 
 def connect_snapped_edges(snapped_edges):
     connected_edge = []

@@ -8,7 +8,7 @@ from django.http import JsonResponse
 
 from stopgenerator.utils import convert_latlng_to_stop_nodes
 from routegenerator.computations import generate_route_network
-from routegenerator.utils import snap_route_network_to_road, create_graph_from_route_network
+from routegenerator.utils import snap_route_network_to_road
 from .computations import perform_genetic_algorithm, compute_fitness_score
 
 @csrf_exempt

@@ -6,7 +6,7 @@ import random
 from loggerinitializer import *
 from preprocessor.utils import get_location_road_graph
 from routegenerator.computations import generate_route_network
-from routegenerator.utils import snap_route_network_to_road, prepare_graph_for_export, create_graph_from_route_network
+from routegenerator.utils import snap_route_network_to_road
 
 
 initialize_logger('')
@@ -130,7 +130,6 @@ def get_highest_scoring_mutation(mutations, num_random_values, weight):
     highest_scoring_graph = nx.Graph()
     highest_score = 0.0
     for graph in mutations:
-        computed_score = compute_fitness_score(graph, num_random_values, weight)
         if (computed_score > highest_score):
             highest_scoring_graph = graph
             highest_score = computed_score
