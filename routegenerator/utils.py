@@ -46,6 +46,48 @@ def merge_list_graphs(list_graphs):
         G = nx.compose(graphs,G)
     return G
 
+def get_max_route_in_graph(graph):
+    max_route = 0
+    for i in graph.edges(data='route_id'):
+        print i[2]
+        if max_route < i[2]:
+            max_route = i[2]
+    return max_route
+
+
+def convert_to_list_graph(graph):
+
+    list_graph = []
+    max_route = get_max_route_in_graph(graph)
+
+    list_temp_nodes_in_edges = []
+    for i in range(0,max_route):
+        G = nx.Graph()
+        for e in graph.edges(data=True):
+            if graph.get_edge_data(*e)["route_id"] == i :
+                G.add_edge(*e)
+                list_temp_nodes_in_edges.append(e[0])
+                list_temp_nodes_in_edges.append(e[1])
+        list_temp_nodes_in_edges = list(set(list_temp_nodes_in_edges))
+        print (list_temp_nodes_in_edges)
+        for n in graph.nodes(data = True):
+            if n[0] in list_temp_nodes_in_edges:
+                G.add_node(*n)
+        print("Route" + str(i))
+        print(G.nodes(data=True))
+        print(G.edges(data=True))
+    list_graph.append(G)
+    return list_graph
+
+
+
+
+
+
+
+
+
+
 def prepare_graph_for_export_string(graph):
     location_road_nodes = get_location_road_nodes()
     export_graph = nx.Graph()

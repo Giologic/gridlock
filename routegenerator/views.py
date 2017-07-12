@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 import computations
 import json
 import logging
+import networkx as nx
+
 logging.basicConfig(filename='routegenerator_views.log', level=logging.DEBUG, format = '%(asctime)s:%(name)s:%(message)s')
 
 from json_tricks import dumps
@@ -11,7 +13,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from stopgenerator.utils import convert_latlng_to_stop_nodes
-from .utils import snap_route_network_to_road
+from .utils import snap_route_network_to_road, merge_list_graphs
 
 @csrf_exempt
 def generate_route_network(request):
@@ -24,7 +26,8 @@ def generate_route_network(request):
     snapped_route_network, export_string, list_graphs = snap_route_network_to_road(route_network)
     logging.debug('Snapped Route Network : {}'.format(snapped_route_network))
     logging.debug('Export String : {}'.format(export_string))
-    logging.debug('List Graphs : {}'.format(list_graphs))
+    # logging.debug('List Graphs : {}'.format(list_graphs))
+    nx.write_gpickle(merge_list_graphs(list_graphs), "route_network.gpickle")
 
     # print(type(export_string))
     # print(export_string)

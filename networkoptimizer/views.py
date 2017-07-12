@@ -7,61 +7,33 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 from stopgenerator.utils import convert_latlng_to_stop_nodes
-from routegenerator.computations import generate_route_network
-from routegenerator.utils import snap_route_network_to_road
+from routegenerator.utils import snap_route_network_to_road, convert_to_list_graph
 from .computations import perform_genetic_algorithm, compute_fitness_score
+import networkx as nx
+
 
 @csrf_exempt
 def check_fitness_score(request):
-    # route_network = json.loads(request.POST['route_network_coordinates'])
+    # route_network = json.loads(request.POST['route_graph'])
+    # route_network = convert_to_list_graph(deserialize("route_graph.txt"))
+    snapped_route_network = nx.read_gpickle("route_network.gpickle")
+    # snapped_route_network = convert_to_list_graph(route_network)
+
     # route_network = [convert_latlng_to_stop_nodes(r) for r in route_network]
     # snapped_route_network = snap_route_network_to_road(route_network, output_graph=True, location_road_graph=None)
-    #
+
     # print(snapped_route_network.edges(data=True))
-    #
-    # num_failure_removal = int(request.POST['num_failure_removal'])
-    # weight_random_failure = float(request.POST['weight_random_failure'])
-    # weight_targeted_failure = float(request.POST['weight_targeted_failure'])
-    # weight_radius_of_gyration = float(request.POST['weight_radius_of_gyration'])
-    #
-    # fitness_score = compute_fitness_score(snapped_route_network, num_failure_removal,
-    #                                       weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
-    #
-    # return JsonResponse({'fitness_score': fitness_score})
 
-    stop_node_coordinates = json.loads(request.POST['stop_node_coordinates'])
-    stop_nodes = convert_latlng_to_stop_nodes(stop_node_coordinates)
+    num_failure_removal = int(request.POST['num_failure_removal'])
+    weight_random_failure = float(request.POST['weight_random_failure'])
+    weight_targeted_failure = float(request.POST['weight_targeted_failure'])
+    weight_radius_of_gyration = float(request.POST['weight_radius_of_gyration'])
 
-    # route_network = json.loads(request.POST['route_network_coordinates'])
-    # route_network = [convert_latlng_to_stop_nodes(r) for r in route_network]
+    fitness_score = compute_fitness_score(snapped_route_network, num_failure_removal,
+                                          weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
 
-    # print(snapped_route_network.nodes(data=True))
-
-    max_walking_dist = float(350)
-    num_mutations = 10
-    snapped_route_network = create_graph_from_route_network(generate_route_network(stop_nodes, max_walking_dist, num_mutations))
-
-    num_failure_removal = 0
-    weight_random_failure = 0
-    weight_targeted_failure = 0
-    weight_radius_of_gyration = 0
-
-    num_evolutions = 10
-    route_mutation_probabilities = [0.7, 0.2, 0.1, 0.1]
-
-    num_generated_network_mutations_per_evolution = 20
-
-
-    optimized_route_network = perform_genetic_algorithm(stop_nodes, snapped_route_network, max_walking_dist,
-                                                        num_evolutions, num_generated_network_mutations_per_evolution,
-                                                        route_mutation_probabilities, num_failure_removal,
-                                                        weight_random_failure,
-                                                        weight_targeted_failure, weight_radius_of_gyration, num_random_values=30,weight=20)
-
-    new_fitness_score = compute_fitness_score(optimized_route_network, num_failure_removal,
-                                              weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
-
-    return JsonResponse({'new_fitness_score': new_fitness_score})
+    print (fitness_score)
+    return JsonResponse({'fitness_score': fitness_score})
 
 
 @csrf_exempt
@@ -69,11 +41,8 @@ def optimize_route_network(request):
     stop_node_coordinates = json.loads(request.POST['stop_node_coordinates'])
     stop_nodes = convert_latlng_to_stop_nodes(stop_node_coordinates)
 
-    route_network = json.loads(request.POST['route_network_coordinates'])
-    route_network = [convert_latlng_to_stop_nodes(r) for r in route_network]
-    snapped_route_network = snap_route_network_to_road(route_network, output_graph=True, location_road_graph=None)
-
-    print(snapped_route_network.nodes(data=True))
+    route_network = nx.read_gpickle("route_network.gpickle")
+    snapped_route_network = convert_to_list_graph(route_network)
 
     max_walking_dist = float(request.POST['max_walking_dist'])
 
