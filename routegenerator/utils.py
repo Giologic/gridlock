@@ -13,6 +13,8 @@ def get_location_road_nodes():
     return [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
 
 def snap_route_network_to_road(route_network):
+    print (route_network.nodes(data=True))
+    print (route_network.nodes(data=True))
     location_road_graph = get_location_road_graph()
     location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
     snapped_route_network = []
@@ -36,8 +38,36 @@ def snap_route_network_to_road(route_network):
         snapped_route = connect_snapped_edges(snapped_route)
         snapped_route_network.append(snapped_route)
 
-        list_graphs_to_string = prepare_graph_for_export_string(merge_list_graphs(list_graphs))
+    graph = merge_list_graphs(list_graphs)
+    list_graphs_to_string = prepare_graph_for_export_string(graph)
+    return snapped_route_network, list_graphs_to_string, list_graphs
 
+def snap_route_network_to_road(route_network):
+    location_road_graph = get_location_road_graph()
+    location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
+    snapped_route_network = []
+    list_graphs = []
+
+    route_id = 0
+    for route in route_network:
+        snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
+        nx.set_edge_attributes(snapped_route, 'route_id', route_id)
+        route_id = route_id + 1
+        list_graphs.append(snapped_route)
+
+        snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
+
+        snapped_route = []
+        for e in snapped_edges:
+            snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
+
+        # Flatten list of UUID edges
+        # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
+        snapped_route = connect_snapped_edges(snapped_route)
+        snapped_route_network.append(snapped_route)
+
+    graph = merge_list_graphs(list_graphs)
+    list_graphs_to_string = prepare_graph_for_export_string(graph)
     return snapped_route_network, list_graphs_to_string, list_graphs
 
 def merge_list_graphs(list_graphs):

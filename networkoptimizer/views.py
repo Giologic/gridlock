@@ -25,6 +25,7 @@ def check_fitness_score(request):
     # print(snapped_route_network.edges(data=True))
 
     num_failure_removal = int(request.POST['num_failure_removal'])
+    # num_failure_removal = 1
     weight_random_failure = float(request.POST['weight_random_failure'])
     weight_targeted_failure = float(request.POST['weight_targeted_failure'])
     weight_radius_of_gyration = float(request.POST['weight_radius_of_gyration'])
@@ -61,7 +62,10 @@ def optimize_route_network(request):
                                                         weight_random_failure,
                                                         weight_targeted_failure, weight_radius_of_gyration)
 
+    snapped_route_network, export_string, list_graphs = optimized_route_network
     new_fitness_score = compute_fitness_score(optimized_route_network, num_failure_removal,
                                               weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
 
-    return JsonResponse({'new_fitness_score': new_fitness_score})
+
+
+    return JsonResponse({'new_fitness_score': new_fitness_score, 'optimized_network':dumps(snapped_route_network), 'export_string':export_string})

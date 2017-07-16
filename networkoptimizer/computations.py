@@ -4,19 +4,26 @@ import networkx as nx
 import numpy as np
 import random
 import routegenerator as ru
+import sys
+from tqdm import tqdm
 
 
 from preprocessor.utils import get_location_road_graph
 from routegenerator.computations import generate_route_network
-from routegenerator.utils import add_distance_to_graph, merge_list_graphs, convert_to_list_graph
+from routegenerator.utils import add_distance_to_graph, merge_list_graphs, convert_to_list_graph, snap_route_network_to_road
 
 
 
 def perform_genetic_algorithm(stop_nodes, list_graphs,
                               max_walking_dist, num_evolutions, num_generated_network_mutations_per_evolution,
                               route_mutation_probabilities,
-                              num_failure_removal, weight_random_failure, weight_targeted_failure, weight_gyration):
+                              fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure, weight_gyration):
     location_road_graph = get_location_road_graph()
+
+    for ig in list_graphs:
+        print ("List Grahps")
+        print(ig.edges(data=True))
+        print(ig.nodes(data=True))
 
     for i in range(num_evolutions):
         num_mutations = np.random.choice(len(route_mutation_probabilities), 1, route_mutation_probabilities)[0]
@@ -34,27 +41,33 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
                     for i in range(0, num_mutations):
                         selected_route_index = np.random.randint(len(list_graphs))
                         mutation_route_network[selected_route_index] = new_snapped_route_network[i]
+                        nx.set_edge_attributes(mutation_route_network[selected_route_index], 'route_id', selected_route_index)
                         merged_graph = merge_list_graphs(mutation_route_network)
                     mutations.append(merged_graph)
 
         # pick the highest scoring mutation among the num_generated_network_mutations_per_evolution
         # mutations.append(ru.snap_route_network_to_road(road_snapped_network, output_graph=True))
-        list_graphs = select_highest_scoring_mutation(mutations, num_failure_removal)
+        for mut in mutations:
+            print("MUTATIONS")
+            mut.nodes(data=True)
+            mut.edges(data=True)
 
-    return snap_route_network_to_road(list_graphs)[0]
+
+        list_graphs = select_highest_scoring_mutation(mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
+
+    return snap_route_network_to_road(list_graphs)
 
 
 def select_random_routes(route_network, num_routes):
     return random.sample(route_network, num_routes)
 
 
-def select_highest_scoring_mutation(candidate_road_snapped_networks, num_failure_removal,
-                                    weight_random_failure, weight_targeted_failure, weight_radius_of_gyration):
+def select_highest_scoring_mutation(candidate_road_snapped_networks, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure , weight_radius_of_gyration):
     max_fitness_score = -np.inf
     max_candidate_route_snapped_network = None
 
     for n in candidate_road_snapped_networks:
-        fitness_score = compute_fitness_score(n, num_failure_removal,
+        fitness_score = compute_fitness_score(n, fraction_of_nodes_to_remove,
                                               weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
         if fitness_score > max_fitness_score:
             max_fitness_score = fitness_score
@@ -62,76 +75,148 @@ def select_highest_scoring_mutation(candidate_road_snapped_networks, num_failure
 
     return convert_to_list_graph(max_candidate_route_snapped_network)
 
+def generate_analytics_failure(graph,fraction_of_nodes_to_remove):
+    route_network_list = []
+    route_network = graph
+    print (route_network.nodes())
+    NetworkSize = len(route_network.nodes()) #network size to use in experiments
+    num_removals = int(fraction_of_nodes_to_remove * NetworkSize) #number of nodes to remove
+    route_network_list.append(route_network)
+#     orig_route_network = copy.deepcopy(route_network_list)
+    net_stat = all_network_statistics(route_network_list)
+    route_ave_diameters, route_ave_path_lengths, route_ave_S = experiments(route_network_list, num_removals, run_fail = True)
 
-def compute_fitness_score(road_snapped_network_graph, num_failure_removal,
+    route_ave_diameters = route_ave_diameters[0]
+    route_ave_path_lengths = route_ave_path_lengths[0]
+    route_ave_S = route_ave_S[0]
+    print (str(route_ave_path_lengths) + "/" + str(route_ave_diameters))
+    return route_ave_path_lengths/route_ave_diameters
+
+def generate_analytics_attack(graph,fraction_of_nodes_to_remove):
+
+    route_network_list = []
+    route_network = graph
+    NetworkSize = len(route_network.nodes()) #network size to use in experiments
+    num_removals = int(fraction_of_nodes_to_remove * NetworkSize) #number of nodes to remove
+
+#     nx.draw(route_network)
+#     plt.show()
+    route_network_list.append(route_network)
+#     orig_route_network = copy.deepcopy(route_network_list)
+#     net_stat = all_network_statistics(route_network_list)
+
+    route_ave_diameters, route_ave_path_lengths, route_ave_S = experiments(route_network_list, num_removals, run_fail = False)
+
+    route_ave_diameters = route_ave_diameters[0]
+    route_ave_path_lengths = route_ave_path_lengths[0]
+    route_ave_S = route_ave_S[0]
+    print (str(route_ave_path_lengths) + "/" + str(route_ave_diameters))
+    return route_ave_path_lengths/route_ave_diameters
+
+def compute_fitness_score(road_snapped_network_graph, fraction_of_nodes_to_remove,
                           weight_random_failure, weight_targeted_failure, weight_radius_of_gyration):
     G = road_snapped_network_graph.copy()
     G2 = road_snapped_network_graph.copy()
     G3 = road_snapped_network_graph.copy()
-    random_failure_robustness = compute_random_failure_robustness(G, num_failure_removal)
+    random_failure_robustness = generate_analytics_failure(G, fraction_of_nodes_to_remove)
+    print ("Weight" + str(weight_random_failure))
+    print ("Failure Robustness " + str(random_failure_robustness))
     weighted_random_failure_robustness = weight_random_failure * random_failure_robustness
 
-    targeted_failure_robustness = compute_targeted_failure_robustness(G2, num_failure_removal)
+    targeted_failure_robustness = generate_analytics_attack(G2, fraction_of_nodes_to_remove)
+    print ("Weight" + str(weight_targeted_failure))
+    print ("Targeted Robustness " + str(targeted_failure_robustness))
     weighted_targeted_failure_robustness = weight_targeted_failure * targeted_failure_robustness
 
     radius_of_gyration = compute_radius_of_gyration(add_distance_to_graph(G3), len(G3.edges()), weight_radius_of_gyration)
+    print ("Weight" + str(weight_radius_of_gyration))
+    print ("Radius of Gyration " + str(radius_of_gyration))
     weighted_radius_of_gyration = weight_radius_of_gyration * radius_of_gyration
 
-    # return weighted_radius_of_gyration - weighted_random_failure_robustness - weighted_targeted_failure_robustness
-    return weighted_radius_of_gyration
+
+    print (weighted_radius_of_gyration)
+    print (weighted_random_failure_robustness)
+    print (weighted_targeted_failure_robustness)
+    numerator = weighted_radius_of_gyration - weighted_random_failure_robustness - weighted_targeted_failure_robustness
+    denominator = weight_random_failure + weight_targeted_failure + weight_radius_of_gyration
+    fitness_score = numerator/denominator
+    return fitness_score
 
 
-def compute_random_failure_robustness(road_snapped_network_graph, num_removals):
-    print(road_snapped_network_graph)
-    for i in range(num_removals):
-        selected_node = random.choice(road_snapped_network_graph.nodes())
-        road_snapped_network_graph.remove_node(selected_node)
+def fail(G): #a python function that will remove a random node from the graph G
+    n = random.choice(G.nodes())  #pick a random node
+    G.remove_node(n) # remove that random node, attached edges automatically removed.
 
-    diameter, avg_path_length, giant_component_fraction = compute_network_statistics(road_snapped_network_graph)
-    return compute_failure_robustness(road_snapped_network_graph, diameter)
+def attack_degree(G): #remove node with maximum degree
+    degrees = G.degree() # get dcitonary where key is node id, value is degree
+    max_degree = max(degrees.values()) # find maximum degree value from all nodes
+    max_keys = [k for k,v in degrees.items() if v==max_degree] #get all nodes who have the maximum degree (may be more than one)
+    G.remove_node(max_keys[0]) #remove just the first node with max degree, we will remove others next
 
-
-def compute_network_statistics(road_snapped_network_graph):
-    path_lengths = get_path_lengths(road_snapped_network_graph)
-    print(path_lengths)
-    avg_path_length = np.mean(path_lengths)
-    max_path_length = max(path_lengths)
-
-    network_size = len(path_lengths)
-    gcc = sorted(nx.connected_component_subgraphs(road_snapped_network_graph), key=len, reverse=True)
-    giant_component_fraction = float(float(gcc[0].order()) / float(network_size))
-    return max_path_length, avg_path_length, giant_component_fraction
+def attack_betweenness(G): #note - not currently used, but try it!
+    betweenness = nx.betweenness_centrality(G) # get dictionary where key is node id and value is betweenness centrality
+    max_betweenenss = max(betweenness.values()) # find maximum degree value from all nodes
+    max_keys = [k for k,v in betweenness.items() if v==max_betweenness] #get all nodes who have the maximum degree (may be more than one)
+    G.remove_node(max_keys[0]) #remove just the first node with max degree, we will remove others next
 
 
-def compute_failure_robustness(road_snapped_network_graph, max_path_length):
-    return float(max_path_length) / float(len(road_snapped_network_graph) - 1)
+def diameter_ave_path_length(G):
+    # We create our own function to do this so things are slightly faster,
+    # we can calculate diameter and avg path length at the same time
+    max_path_length = 0
+    total = 0.0
+    for n in G: #iterate over all nodes
+     path_length=nx.single_source_shortest_path_length(G, n) # generate shortest paths from node n to all others
+     total += sum(path_length.values()) #total of all shortest paths from n
+     if max(path_length.values()) > max_path_length: #keep track of longest shortest path we see.
+         max_path_length = max(path_length.values())
+    try:
+     avg_path_length = total / (G.order()*(G.order() - 1))
+    except ZeroDivisionError:
+     avg_path_length = 0.0
+    return max_path_length, avg_path_length
 
+def all_network_statistics(nw_list):
+# a function that takes in a list of networks and returns 3 lists of same length listing the diameter, average
+# path length and giant component size for all the networks
+    diameters = []
+    path_lengths = []
+    S = []
+    for n in nw_list:
+      d,l,s = a_network_statistics(n)
+      diameters.append(d)
+      path_lengths.append(l)
+      S.append(s)
+    return diameters, path_lengths, S
 
-def get_path_lengths(snapped_road_network_graph):
-    return [sum(nx.single_source_shortest_path_length(snapped_road_network_graph, n).values())
-            for n in snapped_road_network_graph]
+def a_network_statistics(n):
+     Gcc=sorted(nx.connected_component_subgraphs(n), key = len, reverse=True)
+     G0=Gcc[0]
+     d,l = diameter_ave_path_length(G0)
+     s = float(G0.order()) / float(len(n.nodes()))
+     return d,l,s
 
-
-def compute_targeted_failure_robustness(road_snapped_network_graph, num_removals):
-    for i in range(num_removals):
-        node_degrees = road_snapped_network_graph.degree()
-        max_degree = max(node_degrees.values())
-        print(node_degrees)
-        max_degree_node = get_node_with_degree(node_degrees, max_degree)
-        road_snapped_network_graph.remove_node(max_degree_node)
-
-    diameter, avg_path_length, giant_component_fraction = compute_network_statistics(road_snapped_network_graph)
-    return compute_failure_robustness(road_snapped_network_graph, diameter)
-
-
-def get_node_with_degree(node_degrees, degree):
-    print(type(node_degrees))
-    print(node_degrees)
-    for k, v in node_degrees.iteritems():
-        if v == degree:
-            return k
-    return None
-
+def experiments(networks, removals, run_fail=True, measure_every_X_removals=20):
+     # the below list will record the average statistic for all networks, a new entry in the list is added after each fail
+     ave_diameters = []
+     ave_path_lengths = []
+     ave_S = []
+     sys.stderr.write("---- Starting Experiments ---- \n")
+     sys.stderr.flush()
+     for x in tqdm(range(removals)):
+         for n in networks:
+             if run_fail:
+                 fail(n)
+             else:
+                 attack_degree(n)
+         if x % measure_every_X_removals == 0:
+             d, l, s = all_network_statistics(networks)
+             ave_diameters.append(np.mean(d))
+             ave_path_lengths.append(np.mean(l))
+             ave_S.append(np.mean(s))
+     sys.stderr.write("---- Experiments Finished ---- \n")
+     sys.stderr.flush()
+     return ave_diameters, ave_path_lengths, ave_S
 
 def compute_radius_of_gyration(road_snapped_network_graph, num_random_values, weight):
     return _get_efficiency_sum(road_snapped_network_graph, num_random_values, weight)
