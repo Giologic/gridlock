@@ -30,20 +30,37 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
 
         mutations = []
         if num_mutations > 0:
+            print ("Begin Evolution: " + str(i))
+            print("Number of mutable routes" + str(num_mutations))
             for j in range(num_generated_network_mutations_per_evolution):
+                print("Begin Mutation" + str(j))
                 # if num_mutations > 0 then randomly select n (which is ALSO EQUAL to num_mutations)
                 #  routes to be replaced by a new route
                 # replace the routes with the newly generated routes
                 # append the modified network to the mutations list
-                    mutation_route_network = list_graphs
-                    new_route_network = generate_route_network(stop_nodes, max_walking_dist, num_mutations)
-                    new_snapped_route_network = snap_route_network_to_road(new_route_network)[2]
-                    for i in range(0, num_mutations):
-                        selected_route_index = np.random.randint(len(list_graphs))
-                        mutation_route_network[selected_route_index] = new_snapped_route_network[i]
-                        nx.set_edge_attributes(mutation_route_network[selected_route_index], 'route_id', selected_route_index)
-                        merged_graph = merge_list_graphs(mutation_route_network)
-                    mutations.append(merged_graph)
+                mutation_route_network = list_graphs
+                print("Generating New Network with " + str(num_mutations) + " routes")
+                new_route_network = generate_route_network(stop_nodes, max_walking_dist, num_mutations)
+                print("Snapping Network To Road")
+                new_snapped_route_network = snap_route_network_to_road(new_route_network)[2]
+                print("Replacement of Routes Initiated...")
+                for k in range(0, num_mutations):
+                    selected_route_index = np.random.randint(len(list_graphs))
+                    print ("Selected Route Index" + str(selected_route_index))
+                    print ("Replacing ...")
+                    print (mutation_route_network[selected_route_index].edges(data=True))
+                    mutation_route_network[selected_route_index] = new_snapped_route_network[k]
+                    print ("Replaced With... ")
+                    print(new_route_network[k].edges(data=True))
+
+                    print ("Setting new Edge Attr" + str(selected_route_index) + "as route_id")
+                    nx.set_edge_attributes(mutation_route_network[selected_route_index], 'route_id', selected_route_index)
+                    print (mutation_route_network[selected_route_index].edges(data=True))
+                    print ("SET -> Merge")
+                    merged_graph = merge_list_graphs(mutation_route_network)
+                    print ("Merged")
+                mutations.append(merged_graph)
+                print ("Appending ")
 
         # pick the highest scoring mutation among the num_generated_network_mutations_per_evolution
         # mutations.append(ru.snap_route_network_to_road(road_snapped_network, output_graph=True))
@@ -52,10 +69,11 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
             mut.nodes(data=True)
             mut.edges(data=True)
 
+        if(mutations > 0):
+            list_graphs = select_highest_scoring_mutation(mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
 
-        list_graphs = select_highest_scoring_mutation(mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
-
-    return snap_route_network_to_road(list_graphs)
+    print("DONE")
+    # return snap_route_network_to_road(list_graphs)
 
 
 def select_random_routes(route_network, num_routes):
@@ -73,6 +91,7 @@ def select_highest_scoring_mutation(candidate_road_snapped_networks, fraction_of
             max_fitness_score = fitness_score
             max_candidate_route_snapped_network = n
 
+    print ("MAXIMUM FITNESS SCORE: " + str(max_fitness_score))
     return convert_to_list_graph(max_candidate_route_snapped_network)
 
 def generate_analytics_failure(graph,fraction_of_nodes_to_remove):
