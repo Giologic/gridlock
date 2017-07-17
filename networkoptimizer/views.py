@@ -98,16 +98,13 @@ def optimize_route_network(request):
     logging.info("Loaded Snapped Network")
     logging.info("Start Optimization")
 
-    optimized_route_network = perform_genetic_algorithm(stop_nodes, snapped_route_network, max_walking_dist,
+    export_string, optimize_route_network_graph = perform_genetic_algorithm(stop_nodes, snapped_route_network, max_walking_dist,
                                                         num_evolutions, num_generated_network_mutations_per_evolution,
                                                         route_mutation_probabilities, num_failure_removal,
                                                         weight_random_failure,
                                                         weight_targeted_failure, weight_radius_of_gyration)
 
-    snapped_route_network, export_string, list_graphs = optimized_route_network
-    new_fitness_score = compute_fitness_score(optimized_route_network, num_failure_removal,
+    new_fitness_score = compute_fitness_score(optimize_route_network_graph, num_failure_removal,
                                               weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
-
-
-
+    snapped_route_network = None
     return JsonResponse({'new_fitness_score': new_fitness_score, 'optimized_network':dumps(snapped_route_network), 'export_string':export_string})

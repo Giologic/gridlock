@@ -15,7 +15,7 @@ initialize_logger('', "computations")
 
 from preprocessor.utils import get_location_road_graph
 from routegenerator.computations import generate_route_network
-from routegenerator.utils import add_distance_to_graph, merge_list_graphs, convert_to_list_graph, snap_route_network_to_road
+from routegenerator.utils import add_distance_to_graph, merge_list_graphs, convert_to_list_graph, snap_route_network_to_road, prepare_graph_for_export_string
 
 
 
@@ -163,7 +163,7 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
         ctr = ctr + 1
     logging.info("Display Map")
     # CONVERT GRAPH TO DISPLAY
-    # return snap_route_network_to_road(list_graphs)
+    return prepare_graph_for_export_string(merge_list_graphs(list_graphs)), merge_list_graphs(list_graphs)
 
 
 def select_random_routes(route_network, num_routes):

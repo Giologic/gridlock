@@ -44,8 +44,10 @@ def snap_route_network_to_road(route_network):
         logging.info("Current Route Status")
         logging.debug(snapped_route.nodes(data=True))
         logging.debug(snapped_route.edges(data=True))
-        logging.info("Adding Distance to Graph")
+        logging.info("Adding Nodes to Graph")
+        # snapped_route_new = add_node_coords_to_coordinate_list_graph(snapped_route)
         to_snap = snapped_route
+        logging.info("Adding Distance to Graph")
         snapped_route = add_distance_to_graph(to_snap)
         logging.debug(snapped_route.nodes(data=True))
         logging.debug(snapped_route.edges(data=True))
@@ -78,13 +80,26 @@ def snap_route_network_to_road(route_network):
 
 
     list_graphs_to_string = prepare_graph_for_export_string(graph)
+    # snapped_route_network = convert_list_graph_to_list_route_coordinates(list_graphs)
     return snapped_route_network, list_graphs_to_string, list_graphs
+
+def convert_list_graph_to_list_route_coordinates(list_graphs):
+    route_net = []
+    for route in list_graphs:
+        for u,v,d in route.edges(data='lat_long_road_path'):
+            route_net.append(d)
+    logging.info("Route Network Coordinate List")
+    logging.debug(route_net)
+    return route_net
+
 
 def merge_list_graphs(list_graphs):
     G = nx.Graph()
     for graphs in list_graphs:
         G = nx.compose(graphs,G)
     return G
+
+
 
 def get_max_route_in_graph(graph):
     max_route = 0
@@ -202,8 +217,11 @@ def add_distance_to_graph(graph):
     logging.info("Initalized Graph")
     snapped_edges = list(graph.edges_iter(data='road_path', default=1))
     logging.debug("Snapped Edges: {}".format(snapped_edges))
+    dict_temp_tup = {}
 
     for v, inner_d in graph.nodes(data=True):
+        tup = [inner_d['lat'], inner_d['lon']]
+        dict_temp_tup[v] = tup
         export_graph.add_node(v, inner_d)
 
     i = 0
@@ -216,6 +234,8 @@ def add_distance_to_graph(graph):
         if(len(snapped_edges[i][2]) > 0):
             for elem in convert_uuid_route(location_road_nodes, snapped_edges[i][2]):
                 latlng_list.append(elem.latlng)
+            temp_lat_lng_list = latlng_list
+            latlng_list = [dict_temp_tup[edge[0]]] + temp_lat_lng_list + [dict_temp_tup[edge[1]]]
             temp_dict["lat_long_road_path"] = latlng_list
             temp_dict["distance"] = get_total_distance_intersections(latlng_list)
             export_graph.add_edge(edge[0],edge[1],temp_dict)
