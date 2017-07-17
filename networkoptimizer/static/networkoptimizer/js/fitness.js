@@ -5,6 +5,7 @@ $(document).ready(function () {
         var weightRandomFailure = $('#networkoptimizer-weight-random-failure-field').val();
         var weightTargetedFailure = $('#networkoptimizer-weight-targeted-failure-field').val();
         var weightRadiusOfGyration = $('#networkoptimizer-radius-of-gyration-field').val();
+        var inportString =
         computeFitnessScore(numRemovals, weightRandomFailure, weightTargetedFailure, weightRadiusOfGyration);
     });
 });

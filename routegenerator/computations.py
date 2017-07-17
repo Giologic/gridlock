@@ -2,11 +2,15 @@ from __future__ import absolute_import, division
 
 import math
 import random
+import logging
 
 from scipy.spatial import KDTree
 from scipy.spatial.distance import euclidean
 from stopgenerator.utils import all_nodes_disabled, enable_stop_nodes
 
+from loggerinitializer import initialize_logger
+
+initialize_logger('','computations')
 
 def generate_route_network(stop_nodes, max_walking_dist, num_generations):
     # k-dimensional tree is built only once per route for optimization

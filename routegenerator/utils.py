@@ -5,68 +5,78 @@ import networkx as nx
 from preprocessor.utils import get_location_road_graph
 from stopgenerator.utils import closest_node
 from scipy.spatial.distance import euclidean
+import ast
 import logging
-logging.basicConfig(filename='routegenerator_utils.log', level=logging.DEBUG, format = '%(asctime)s:%(name)s:%(message)s')
+# logging.basicConfig(filename='routegenerator_utils.log', level=logging.DEBUG, format = '%(asctime)s:%(name)s:%(message)s')
+from loggerinitializer import initialize_logger
+
+road_data = None
+
+initialize_logger('','utils')
 
 def get_location_road_nodes():
-    location_road_graph = get_location_road_graph()
-    return [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
+    logging.info("RETRIEVING LOCATION ROAD NODES")
+    if road_data == None:
+        location_road_graph = get_location_road_graph()
+        global road_data
+        road_data = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
+
+    logging.info("RETURNING ")
+    return road_data
 
 def snap_route_network_to_road(route_network):
-    print (route_network.nodes(data=True))
-    print (route_network.nodes(data=True))
+    logging.info("Initalizing Snap Route Network to Road")
+    logging.debug(route_network)
+    logging.info("Retrieving Graph")
     location_road_graph = get_location_road_graph()
+    logging.info("Acquiring Road Node Data")
     location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
     snapped_route_network = []
     list_graphs = []
-
     route_id = 0
+    logging.info("Starting Snapping per Route Loop")
     for route in route_network:
+        logging.info("Snapping")
         snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
+        logging.info("Setting Edge Attributes of Route ID: " + str(route_id))
         nx.set_edge_attributes(snapped_route, 'route_id', route_id)
         route_id = route_id + 1
+        logging.info("Current Route Status")
+        logging.debug(snapped_route.nodes(data=True))
+        logging.debug(snapped_route.edges(data=True))
+        logging.info("Adding Distance to Graph")
+        to_snap = snapped_route
+        snapped_route = add_distance_to_graph(to_snap)
+        logging.debug(snapped_route.nodes(data=True))
+        logging.debug(snapped_route.edges(data=True))
+        logging.info("Appending")
         list_graphs.append(snapped_route)
+        logging.info("Appended")
 
+        logging.info("Snapping Edges")
         snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
 
         snapped_route = []
+        logging.info("Edges Snapped")
         for e in snapped_edges:
+            logging.info("Appending Snapped Route")
+            logging.debug(e)
             snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
+            logging.info("Appended Snapped Route")
 
         # Flatten list of UUID edges
         # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
         snapped_route = connect_snapped_edges(snapped_route)
         snapped_route_network.append(snapped_route)
 
+    logging.info("MERGE")
     graph = merge_list_graphs(list_graphs)
-    list_graphs_to_string = prepare_graph_for_export_string(graph)
-    return snapped_route_network, list_graphs_to_string, list_graphs
 
-def snap_route_network_to_road(route_network):
-    location_road_graph = get_location_road_graph()
-    location_road_nodes = [RoadNode(data) for node, data in location_road_graph.nodes_iter(data=True)]
-    snapped_route_network = []
-    list_graphs = []
+    logging.debug("MERGED GRAPH")
+    logging.debug(graph.nodes(data=True))
+    logging.debug(graph.edges(data=True))
 
-    route_id = 0
-    for route in route_network:
-        snapped_route = snap_route_to_road(location_road_graph, location_road_nodes, route)
-        nx.set_edge_attributes(snapped_route, 'route_id', route_id)
-        route_id = route_id + 1
-        list_graphs.append(snapped_route)
 
-        snapped_edges = list(snapped_route.edges_iter(data='road_path', default=1))
-
-        snapped_route = []
-        for e in snapped_edges:
-            snapped_route.append(convert_uuid_route(location_road_nodes, e[2]))
-
-        # Flatten list of UUID edges
-        # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
-        snapped_route = connect_snapped_edges(snapped_route)
-        snapped_route_network.append(snapped_route)
-
-    graph = merge_list_graphs(list_graphs)
     list_graphs_to_string = prepare_graph_for_export_string(graph)
     return snapped_route_network, list_graphs_to_string, list_graphs
 
@@ -86,7 +96,7 @@ def get_max_route_in_graph(graph):
 
 
 def convert_to_list_graph(graph):
-
+    logging.info("Converting Graph to Graph List")
     list_graph = []
     max_route = get_max_route_in_graph(graph)
 
@@ -106,17 +116,47 @@ def convert_to_list_graph(graph):
         print("Route" + str(i))
         print(G.nodes(data=True))
         print(G.edges(data=True))
-    list_graph.append(G)
+        list_graph.append(G)
     return list_graph
 
 
 
 
+def prepare_graph_from_import(input, type):
+    graph = nx.Graph()
+    string_input = None
+    if type == 'f':
+        string_input = open(input, 'r', encoding="utf-8-sig").read()
+    elif type == 's':
+        string_input = input
 
+    string_input = string_input.split("\n")
+    flag = False
+    for line in string_input:
+        line = line.strip('(')
+        line = line.strip(')')
+        if (flag == False):
+            if (line == "|"):
+                flag = True
+            else:
+                elem = line.split(", ")
+                node_id = int(elem[0])
+                temp_dict_str = elem[1] + ", " + elem[2]
+                temp_dict = ast.literal_eval(temp_dict_str)
+                graph.add_node(node_id, temp_dict)
+        elif (flag == True):
+            elem = line.split("{")
+            node_id = elem[0].split(",")
 
+            if (node_id[0] != "" and node_id != ""):
+                node_id_1 = int(node_id[0])
+                node_id_2 = int(node_id[1])
 
+                temp_dict_str = "{" + elem[1]
+                temp_dict = ast.literal_eval(temp_dict_str)
+                graph.add_edge(node_id_1, node_id_2, temp_dict)
 
-
+    return graph
 
 def prepare_graph_for_export_string(graph):
     location_road_nodes = get_location_road_nodes()
@@ -153,8 +193,13 @@ def prepare_graph_for_export_string(graph):
     return str_graph_output
 
 def add_distance_to_graph(graph):
+    logging.info("Entered Adding Distance to Graph")
+    logging.debug(graph.nodes(data=True))
+    logging.debug(graph.edges(data=True))
     location_road_nodes = get_location_road_nodes()
+    logging.info("Retrieved Road Nodes")
     export_graph = nx.Graph()
+    logging.info("Initalized Graph")
     snapped_edges = list(graph.edges_iter(data='road_path', default=1))
     logging.debug("Snapped Edges: {}".format(snapped_edges))
 

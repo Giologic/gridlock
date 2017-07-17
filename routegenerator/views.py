@@ -6,7 +6,7 @@ import json
 import logging
 import networkx as nx
 
-logging.basicConfig(filename='routegenerator_views.log', level=logging.DEBUG, format = '%(asctime)s:%(name)s:%(message)s')
+# logging.basicConfig(filename='routegenerator_views.log', level=logging.DEBUG, format = '%(asctime)s:%(name)s:%(message)s')
 
 from json_tricks import dumps
 from django.http import JsonResponse
@@ -14,6 +14,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 from stopgenerator.utils import convert_latlng_to_stop_nodes
 from .utils import snap_route_network_to_road, merge_list_graphs
+
+
+from loggerinitializer import initialize_logger
+
+initialize_logger('','views')
 
 @csrf_exempt
 def generate_route_network(request):
@@ -24,10 +29,23 @@ def generate_route_network(request):
 
     route_network = computations.generate_route_network(stop_nodes, maximum_walking_distance, number_of_generations)
     snapped_route_network, export_string, list_graphs = snap_route_network_to_road(route_network)
+
+    # graph = merge_list_graphs(list_graphs)
+    #OUTPUT MO
+    #DISPLAY GRAPH (graph)
+
     logging.debug('Snapped Route Network : {}'.format(snapped_route_network))
     logging.debug('Export String : {}'.format(export_string))
     # logging.debug('List Graphs : {}'.format(list_graphs))
-    nx.write_gpickle(merge_list_graphs(list_graphs), "route_network.gpickle")
+    merged_graph = merge_list_graphs(list_graphs)
+
+    logging.info("MERGED GRAPH VALUES")
+    logging.info("MERGED GRAPH NODES")
+    logging.debug(merged_graph.nodes(data=True))
+    logging.info("MERGED GRAPH EDGES")
+    logging.debug(merged_graph.edges(data=True))
+
+    nx.write_yaml(merged_graph, "route_network.yaml")
 
     # print(type(export_string))
     # print(export_string)

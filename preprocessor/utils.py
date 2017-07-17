@@ -16,8 +16,7 @@ def get_location_geometry(location):
 
 
 def get_location_road_graph():
-    road_graph_cache_path = os.path.join(settings.DATA_FILES_ROOT,
-                                         'gridlock/preprocessor/graphs/metromanila-graph-cache.pickle')
+    road_graph_cache_path = os.path.join(settings.DATA_FILES_ROOT, 'gridlock/preprocessor/graphs/metromanila-graph-cache.pickle')
     if not os.path.exists(road_graph_cache_path):
         location_road_graph = ox.load_graphml(
             'gridlock/preprocessor/graphs/metromanila.gml', settings.DATA_FILES_ROOT)

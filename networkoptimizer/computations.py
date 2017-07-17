@@ -6,6 +6,11 @@ import random
 import routegenerator as ru
 import sys
 from tqdm import tqdm
+import copy
+import logging
+from loggerinitializer import initialize_logger
+
+initialize_logger('', "computations")
 
 
 from preprocessor.utils import get_location_road_graph
@@ -20,59 +25,144 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
                               fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure, weight_gyration):
     location_road_graph = get_location_road_graph()
 
+    logging.info("Looping List Graphs; Total Number of Routes in List: " + str(len(list_graphs)))
+
+    ctr = 1
     for ig in list_graphs:
-        print ("List Grahps")
-        print(ig.edges(data=True))
-        print(ig.nodes(data=True))
+        logging.info("Route Nodes: " + str(ctr))
+        logging.debug(ig.nodes(data=True))
+        logging.info("Route Edges: " + str(ctr))
+        logging.debug(ig.edges(data=True))
+        ctr = ctr + 1
 
+    logging.info("Starting Genetic Algorithm")
+    logging.info("Number of Network Mutations to be produced : " + str(num_generated_network_mutations_per_evolution))
+    highest_evolution_score = -np.inf
     for i in range(num_evolutions):
-        num_mutations = np.random.choice(len(route_mutation_probabilities), 1, route_mutation_probabilities)[0]
-
         mutations = []
+        num_mutations = np.random.choice(len(route_mutation_probabilities), 1, route_mutation_probabilities)[0]
+        logging.info("@Evolution: " + str(i))
+        logging.info("Number of Mutated Routes: " + str(num_mutations))
+
         if num_mutations > 0:
-            print ("Begin Evolution: " + str(i))
-            print("Number of mutable routes" + str(num_mutations))
+            logging.info("Number of mutations is greater than 0")
+            logging.info("Starting Mutations")
             for j in range(num_generated_network_mutations_per_evolution):
-                print("Begin Mutation" + str(j))
+                logging.info("@Mutation: " + str(j))
                 # if num_mutations > 0 then randomly select n (which is ALSO EQUAL to num_mutations)
                 #  routes to be replaced by a new route
                 # replace the routes with the newly generated routes
                 # append the modified network to the mutations list
-                mutation_route_network = list_graphs
-                print("Generating New Network with " + str(num_mutations) + " routes")
-                new_route_network = generate_route_network(stop_nodes, max_walking_dist, num_mutations)
-                print("Snapping Network To Road")
-                new_snapped_route_network = snap_route_network_to_road(new_route_network)[2]
-                print("Replacement of Routes Initiated...")
-                for k in range(0, num_mutations):
-                    selected_route_index = np.random.randint(len(list_graphs))
-                    print ("Selected Route Index" + str(selected_route_index))
-                    print ("Replacing ...")
-                    print (mutation_route_network[selected_route_index].edges(data=True))
-                    mutation_route_network[selected_route_index] = new_snapped_route_network[k]
-                    print ("Replaced With... ")
-                    print(new_route_network[k].edges(data=True))
+                mutation_route_network = list_graphs[:]
+                logging.info("Successfully Copied List Graph to Mutation Route Network")
 
-                    print ("Setting new Edge Attr" + str(selected_route_index) + "as route_id")
+                ctr = 1
+                for mut_rot in mutation_route_network:
+                    logging.info("Route Nodes: " + str(ctr))
+                    logging.debug(mut_rot.nodes(data=True))
+                    logging.info("Route Edges: " + str(ctr))
+                    logging.debug(mut_rot.edges(data=True))
+                    ctr = ctr + 1
+
+                logging.info("Generating New Route Network")
+                logging.info("@Parameters:" + "\n"
+                              + "Stop Nodes: " + str(stop_nodes) + "\n"
+                              + "Max Walking Distance: " + str(max_walking_dist) + "\n"
+                              + "Number of Mutations: " + str(num_mutations) +"\n"
+                              )
+
+                new_route_network = generate_route_network(stop_nodes, max_walking_dist, len(list_graphs))
+                logging.info("Route Generation Finished")
+                logging.info("Snapping Network To Road")
+                logging.debug(new_route_network)
+                display, exp_string, new_snapped_route_network = snap_route_network_to_road(new_route_network)
+                logging.info("Snapping Finished")
+
+                ctr = 1
+                for snap_net in new_snapped_route_network:
+                    logging.info("Route Nodes: " + str(ctr))
+                    logging.debug(snap_net.nodes(data=True))
+                    logging.info("Route Edges: " + str(ctr))
+                    logging.debug(snap_net.edges(data=True))
+                    ctr = ctr + 1
+
+                logging.info("Replacement of Routes Initiated")
+                for k in range(0, num_mutations):
+                    logging.info("@Mutation: " + str(k + 1))
+                    selected_route_index = np.random.randint(len(list_graphs))
+                    logging.info("Selected Route Index: " + str(selected_route_index))
+                    logging.info("Replacing Routes")
+
+                    mutation_route_network[selected_route_index] = new_snapped_route_network[k]
+
+                    logging.info("New Route Network Nodes @ Route Index: " + str(selected_route_index))
+                    logging.debug(new_snapped_route_network[selected_route_index].nodes(data=True))
+                    logging.info("New Route Network Edges @ Route Index: " + str(selected_route_index))
+                    logging.debug(new_snapped_route_network[selected_route_index].edges(data=True))
+
+                    logging.info("Replacement Complete")
+
+                    logging.info("Mutation Route Network Nodes @ Route Index: " + str(selected_route_index))
+                    logging.debug(mutation_route_network[selected_route_index].nodes(data=True))
+                    logging.info("Mutation Route Network Edges @ Route Index: " + str(selected_route_index))
+                    logging.debug(mutation_route_network[selected_route_index].edges(data=True))
+
+                    logging.info("Reassigning New Edge Attribute " + str(selected_route_index) + "to route_id")
                     nx.set_edge_attributes(mutation_route_network[selected_route_index], 'route_id', selected_route_index)
-                    print (mutation_route_network[selected_route_index].edges(data=True))
-                    print ("SET -> Merge")
+                    logging.info("Reassigned State")
+
+                    logging.info("Mutation Route Network Nodes @ Route Index: " + str(selected_route_index))
+                    logging.debug(mutation_route_network[selected_route_index].nodes(data=True))
+                    logging.info("Mutation Route Network Edges @ Route Index: " + str(selected_route_index))
+                    logging.debug(mutation_route_network[selected_route_index].edges(data=True))
+
+                    logging.info("Merging Graph in Preparation for Computing Fitness Function")
                     merged_graph = merge_list_graphs(mutation_route_network)
-                    print ("Merged")
-                mutations.append(merged_graph)
-                print ("Appending ")
+                    logging.info("Merge Graph Completed")
+
+                    logging.info("Merged Graph Nodes @ Route Index: " + str(selected_route_index))
+                    logging.debug(mutation_route_network[selected_route_index].nodes(data=True))
+                    logging.info("Merged Graph Edges @ Route Index: " + str(selected_route_index))
+                    logging.debug(mutation_route_network[selected_route_index].edges(data=True))
+
+                    logging.info("Appending Merged Graph")
+                    mutations.append(merged_graph)
+                    logging.info("Appended Merged Graph")
 
         # pick the highest scoring mutation among the num_generated_network_mutations_per_evolution
         # mutations.append(ru.snap_route_network_to_road(road_snapped_network, output_graph=True))
+        ctr = 1
         for mut in mutations:
-            print("MUTATIONS")
-            mut.nodes(data=True)
-            mut.edges(data=True)
+            logging.info("Merged Graph Nodes: " + str(ctr))
+            logging.debug(mut.nodes(data=True))
+            logging.info("Merged Graph Edges: " + str(ctr))
+            logging.debug(mut.edges(data=True))
+            ctr = ctr + 1
 
-        if(mutations > 0):
-            list_graphs = select_highest_scoring_mutation(mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
-
-    print("DONE")
+        if len(mutations) > 0:
+            logging.info("Calculating Highest Scoring Graph")
+            new_list_graph, merged_graph_form, score = select_highest_scoring_mutation(mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
+            logging.info("Calculated Highest Scoring Graph with score: " + str(score))
+            highest_evolution_score = score
+            ctr = 1
+            for rot in new_list_graph:
+                logging.info("Highest Scoring Graph Route Nodes: " + str(ctr))
+                logging.debug(rot.nodes(data=True))
+                logging.info("Highest Scoring Graph Route: " + str(ctr))
+                logging.debug(rot.edges(data=True))
+                ctr = ctr + 1
+            list_graphs = new_list_graph
+        else: logging.info("Skipped Evolution because No Mutations")
+    logging.info("Finished Genetic Algorithm with Highest Fitness Score: " + str(highest_evolution_score))
+    ctr = 1
+    for rot in list_graphs:
+        logging.info("Highest Scoring Graph Route Nodes: " + str(ctr))
+        logging.debug(rot.nodes(data=True))
+        logging.info("Highest Scoring Graph Route: " + str(ctr))
+        logging.debug(rot.edges(data=True))
+        ctr = ctr + 1
+    logging.info("Display Map")
+    # CONVERT GRAPH TO DISPLAY
     # return snap_route_network_to_road(list_graphs)
 
 
@@ -92,7 +182,7 @@ def select_highest_scoring_mutation(candidate_road_snapped_networks, fraction_of
             max_candidate_route_snapped_network = n
 
     print ("MAXIMUM FITNESS SCORE: " + str(max_fitness_score))
-    return convert_to_list_graph(max_candidate_route_snapped_network)
+    return convert_to_list_graph(max_candidate_route_snapped_network), max_candidate_route_snapped_network, max_fitness_score
 
 def generate_analytics_failure(graph,fraction_of_nodes_to_remove):
     route_network_list = []
