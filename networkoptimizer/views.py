@@ -5,7 +5,7 @@ import json
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
+from json_tricks import dumps
 from stopgenerator.utils import convert_latlng_to_stop_nodes
 from routegenerator.utils import snap_route_network_to_road, convert_to_list_graph
 from .computations import perform_genetic_algorithm, compute_fitness_score

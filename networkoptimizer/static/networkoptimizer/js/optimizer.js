@@ -32,6 +32,7 @@ function optimizeRouteNetwork(numRemovals, weightRandomFailure,
         'num_evolutions': numEvolutions,
         'num_mutations_per_evolution': numMutationPerEvolution
     }, function (returnedData) {
+        clearRoutes();
         console.log("optimize.js:optimizeRouteNetwork: Response from server received");
         console.log(returnedData);
         var optimizedNetwork = JSON.parse(returnedData['optimized_network']);
