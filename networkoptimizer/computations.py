@@ -93,7 +93,7 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
                     logging.info("Selected Route Index: " + str(selected_route_index))
                     logging.info("Replacing Routes")
 
-                    mutation_route_network[selected_route_index] = new_snapped_route_network[k]
+                    mutation_route_network[selected_route_index] = new_snapped_route_network[selected_route_index]
 
                     logging.info("New Route Network Nodes @ Route Index: " + str(selected_route_index))
                     logging.debug(new_snapped_route_network[selected_route_index].nodes(data=True))
@@ -163,6 +163,8 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
         ctr = ctr + 1
     logging.info("Display Map")
     # CONVERT GRAPH TO DISPLAY
+
+    nx.write_yaml(merge_list_graphs(list_graphs), "optimized_network.yaml")
     return prepare_graph_for_export_string(merge_list_graphs(list_graphs)), merge_list_graphs(list_graphs)
 
 
@@ -237,7 +239,7 @@ def compute_fitness_score(road_snapped_network_graph, fraction_of_nodes_to_remov
     print ("Targeted Robustness " + str(targeted_failure_robustness))
     weighted_targeted_failure_robustness = weight_targeted_failure * targeted_failure_robustness
 
-    radius_of_gyration = compute_radius_of_gyration(add_distance_to_graph(G3), len(G3.edges()), weight_radius_of_gyration)
+    radius_of_gyration = compute_radius_of_gyration(add_distance_to_graph(G3), 100, weight_radius_of_gyration)
     print ("Weight" + str(weight_radius_of_gyration))
     print ("Radius of Gyration " + str(radius_of_gyration))
     weighted_radius_of_gyration = weight_radius_of_gyration * radius_of_gyration

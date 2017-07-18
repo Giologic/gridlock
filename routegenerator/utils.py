@@ -70,6 +70,8 @@ def snap_route_network_to_road(route_network):
         # snapped_route = [e for snapped_edges in snapped_route for e in snapped_edges]
         snapped_route = connect_snapped_edges(snapped_route)
         snapped_route_network.append(snapped_route)
+        logging.info("Snapped Route Network")
+        logging.debug(snapped_route_network)
 
     logging.info("MERGE")
     graph = merge_list_graphs(list_graphs)
@@ -80,7 +82,7 @@ def snap_route_network_to_road(route_network):
 
 
     list_graphs_to_string = prepare_graph_for_export_string(graph)
-    # snapped_route_network = convert_list_graph_to_list_route_coordinates(list_graphs)
+    convert_list_graph_to_list_route_coordinates(list_graphs)
     return snapped_route_network, list_graphs_to_string, list_graphs
 
 def convert_list_graph_to_list_route_coordinates(list_graphs):
