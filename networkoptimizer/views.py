@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from json_tricks import dumps
 from stopgenerator.utils import convert_latlng_to_stop_nodes
-from routegenerator.utils import snap_route_network_to_road, convert_to_list_graph
+from routegenerator.utils import snap_route_network_to_road , convert_list_graph_to_list_route_coordinates, merge_list_graphs, convert_to_list_graph
 from .computations import perform_genetic_algorithm, compute_fitness_score
 import networkx as nx
 import logging
@@ -20,7 +20,8 @@ initialize_logger('','views')
 def check_fitness_score(request):
     # route_network = json.loads(request.POST['route_graph'])
     # route_network = convert_to_list_graph(deserialize("route_graph.txt"))
-    snapped_route_network = nx.read_yaml(route_network.yaml)
+    graph = nx.read_yaml("route_network.yaml")
+    snapped_route_network = graph.copy()
     # snapped_route_network = convert_to_list_graph(route_network)
 
     # route_network = [convert_latlng_to_stop_nodes(r) for r in route_network]
@@ -48,7 +49,8 @@ def optimize_route_network(request):
 
     logging.info("Graph Load Network")
 
-    route_network = nx.read_yaml("route_network.yaml")
+    graph = nx.read_yaml("route_network.yaml")
+    route_network = graph.copy()
     logging.info("Route Network Nodes")
     logging.debug(route_network.nodes(data=True))
     logging.info("Route Network Edges")
@@ -69,7 +71,7 @@ def optimize_route_network(request):
 
     max_walking_dist = float(request.POST['max_walking_dist'])
 
-    num_failure_removal = int(request.POST['num_failure_removal'])
+    num_failure_removal = float(request.POST['num_failure_removal'])
     weight_random_failure = float(request.POST['weight_random_failure'])
     weight_targeted_failure = float(request.POST['weight_targeted_failure'])
     weight_radius_of_gyration = float(request.POST['weight_radius_of_gyration'])
@@ -98,13 +100,27 @@ def optimize_route_network(request):
     logging.info("Loaded Snapped Network")
     logging.info("Start Optimization")
 
-    export_string, optimize_route_network_graph = perform_genetic_algorithm(stop_nodes, snapped_route_network, max_walking_dist,
+    export_string, optimized_list_graphs = perform_genetic_algorithm(stop_nodes, snapped_route_network, max_walking_dist,
                                                         num_evolutions, num_generated_network_mutations_per_evolution,
                                                         route_mutation_probabilities, num_failure_removal,
                                                         weight_random_failure,
                                                         weight_targeted_failure, weight_radius_of_gyration)
 
-    new_fitness_score = compute_fitness_score(optimize_route_network_graph, num_failure_removal,
+    list_coordinates_snapped_network = convert_list_graph_to_list_route_coordinates(optimized_list_graphs)
+    new_fitness_score = compute_fitness_score(merge_list_graphs(optimized_list_graphs), num_failure_removal,
                                               weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
-    snapped_route_network = None
-    return JsonResponse({'new_fitness_score': new_fitness_score, 'optimized_network':dumps(snapped_route_network), 'export_string':export_string})
+    new_list = convert_to_road_noad_network(list_coordinates_snapped_network)
+    print ("Coordinate List")
+    print(list_coordinates_snapped_network)
+    return JsonResponse({'new_fitness_score': new_fitness_score, 'optimized_network':dumps(new_list), 'export_string':export_string})
+
+def convert_to_road_noad_network(route_network):
+    ret = []
+    for route in route_network:
+        ret.append([RoadNode(0, x) for x in route])
+    return ret
+
+class RoadNode(object):
+    def __init__(self ,uuid, latlng):
+        self.uuid = 0
+        self.latlng = latlng # [data['y'], data['x']]

@@ -9,6 +9,7 @@ from tqdm import tqdm
 import copy
 import logging
 from loggerinitializer import initialize_logger
+import os
 
 initialize_logger('', "computations")
 
@@ -38,9 +39,12 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
     logging.info("Starting Genetic Algorithm")
     logging.info("Number of Network Mutations to be produced : " + str(num_generated_network_mutations_per_evolution))
     highest_evolution_score = -np.inf
+    evoultion_number = 0
     for i in range(num_evolutions):
         mutations = []
+        evoultion_number = i
         num_mutations = np.random.choice(len(route_mutation_probabilities), 1, route_mutation_probabilities)[0]
+
         logging.info("@Evolution: " + str(i))
         logging.info("Number of Mutated Routes: " + str(num_mutations))
 
@@ -141,7 +145,7 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
 
         if len(mutations) > 0:
             logging.info("Calculating Highest Scoring Graph")
-            new_list_graph, merged_graph_form, score = select_highest_scoring_mutation(mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
+            new_list_graph, merged_graph_form, score = select_highest_scoring_mutation(evoultion_number, mutations, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure ,weight_gyration)
             logging.info("Calculated Highest Scoring Graph with score: " + str(score))
             highest_evolution_score = score
             ctr = 1
@@ -152,6 +156,7 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
                 logging.debug(rot.edges(data=True))
                 ctr = ctr + 1
             list_graphs = new_list_graph
+            nx.write_yaml(merge_list_graphs(new_list_graph), "optimized_network_" + str(evoultion_number) + ".yaml")
         else: logging.info("Skipped Evolution because No Mutations")
     logging.info("Finished Genetic Algorithm with Highest Fitness Score: " + str(highest_evolution_score))
     ctr = 1
@@ -165,48 +170,78 @@ def perform_genetic_algorithm(stop_nodes, list_graphs,
     # CONVERT GRAPH TO DISPLAY
 
     nx.write_yaml(merge_list_graphs(list_graphs), "optimized_network.yaml")
-    return prepare_graph_for_export_string(merge_list_graphs(list_graphs)), merge_list_graphs(list_graphs)
+
+    return prepare_graph_for_export_string(merge_list_graphs(list_graphs)), list_graphs
+
+def print_scores_to_file(evolution, scores, highest):
+    text_file = None
+    if not os.path.exists("Scores.txt"):
+        text_file = open("Scores.txt", "w")
+    else:
+        text_file = open("Scores.txt", "a")
+
+    text_file.write("Evolution/n")
+    text_file.write(str(evolution))
+    text_file.write("Mutation/n")
+    for scr in scores:
+        text_file.write(str(scr)+"/n")
+    text_file.write("Max/n")
+    text_file.write(highest)
+
 
 
 def select_random_routes(route_network, num_routes):
     return random.sample(route_network, num_routes)
 
 
-def select_highest_scoring_mutation(candidate_road_snapped_networks, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure , weight_radius_of_gyration):
+def select_highest_scoring_mutation(evoltion, candidate_road_snapped_networks, fraction_of_nodes_to_remove, weight_random_failure, weight_targeted_failure , weight_radius_of_gyration):
     max_fitness_score = -np.inf
     max_candidate_route_snapped_network = None
+    scoring_list = []
 
     for n in candidate_road_snapped_networks:
         fitness_score = compute_fitness_score(n, fraction_of_nodes_to_remove,
                                               weight_random_failure, weight_targeted_failure, weight_radius_of_gyration)
+        scoring_list.append(fitness_score)
         if fitness_score > max_fitness_score:
             max_fitness_score = fitness_score
             max_candidate_route_snapped_network = n
 
+    print_scores_to_file(evoltion, scoring_list, max_fitness_score)
     print ("MAXIMUM FITNESS SCORE: " + str(max_fitness_score))
+
     return convert_to_list_graph(max_candidate_route_snapped_network), max_candidate_route_snapped_network, max_fitness_score
 
 def generate_analytics_failure(graph,fraction_of_nodes_to_remove):
+    route_ave_diameters = 0.0
+    route_ave_path_lengths = 0.0
+    route_ave_S = 0.0
     route_network_list = []
-    route_network = graph
+    route_network = graph.copy()
     print (route_network.nodes())
     NetworkSize = len(route_network.nodes()) #network size to use in experiments
     num_removals = int(fraction_of_nodes_to_remove * NetworkSize) #number of nodes to remove
     route_network_list.append(route_network)
 #     orig_route_network = copy.deepcopy(route_network_list)
-    net_stat = all_network_statistics(route_network_list)
-    route_ave_diameters, route_ave_path_lengths, route_ave_S = experiments(route_network_list, num_removals, run_fail = True)
+#     net_stat = all_network_statistics(route_network_list)
+    if len(route_network_list) > 0:
+        route_ave_diameters_list, route_ave_path_lengths_list, route_ave_S_list = experiments(route_network_list, num_removals, run_fail = True)
+        if len(route_ave_diameters_list) > 0 and len(route_ave_path_lengths_list) > 0 and len(route_ave_S_list) > 0:
+            route_ave_diameters = route_ave_diameters_list[0]
+            route_ave_path_lengths = route_ave_path_lengths_list[0]
+            route_ave_S = route_ave_S_list[0]
+            print (str(route_ave_path_lengths) + "/" + str(route_ave_diameters))
+            return route_ave_path_lengths/route_ave_diameters
+        else: logging.info("SKIPPED EXPERIMENT SCORING RETURNING 0")
 
-    route_ave_diameters = route_ave_diameters[0]
-    route_ave_path_lengths = route_ave_path_lengths[0]
-    route_ave_S = route_ave_S[0]
-    print (str(route_ave_path_lengths) + "/" + str(route_ave_diameters))
-    return route_ave_path_lengths/route_ave_diameters
+    return 0.0
 
 def generate_analytics_attack(graph,fraction_of_nodes_to_remove):
-
+    route_ave_diameters = 0.0
+    route_ave_path_lengths = 0.0
+    route_ave_S = 0.0
     route_network_list = []
-    route_network = graph
+    route_network = graph.copy()
     NetworkSize = len(route_network.nodes()) #network size to use in experiments
     num_removals = int(fraction_of_nodes_to_remove * NetworkSize) #number of nodes to remove
 
@@ -215,14 +250,15 @@ def generate_analytics_attack(graph,fraction_of_nodes_to_remove):
     route_network_list.append(route_network)
 #     orig_route_network = copy.deepcopy(route_network_list)
 #     net_stat = all_network_statistics(route_network_list)
+    if len(route_network_list) > 0:
+        route_ave_diameters, route_ave_path_lengths, route_ave_S = experiments(route_network_list, num_removals, run_fail = False)
+        route_ave_diameters = route_ave_diameters[0]
+        route_ave_path_lengths = route_ave_path_lengths[0]
+        route_ave_S = route_ave_S[0]
+        print (str(route_ave_path_lengths) + "/" + str(route_ave_diameters))
 
-    route_ave_diameters, route_ave_path_lengths, route_ave_S = experiments(route_network_list, num_removals, run_fail = False)
+    return route_ave_path_lengths / route_ave_diameters
 
-    route_ave_diameters = route_ave_diameters[0]
-    route_ave_path_lengths = route_ave_path_lengths[0]
-    route_ave_S = route_ave_S[0]
-    print (str(route_ave_path_lengths) + "/" + str(route_ave_diameters))
-    return route_ave_path_lengths/route_ave_diameters
 
 def compute_fitness_score(road_snapped_network_graph, fraction_of_nodes_to_remove,
                           weight_random_failure, weight_targeted_failure, weight_radius_of_gyration):
@@ -239,7 +275,7 @@ def compute_fitness_score(road_snapped_network_graph, fraction_of_nodes_to_remov
     print ("Targeted Robustness " + str(targeted_failure_robustness))
     weighted_targeted_failure_robustness = weight_targeted_failure * targeted_failure_robustness
 
-    radius_of_gyration = compute_radius_of_gyration(add_distance_to_graph(G3), 100, weight_radius_of_gyration)
+    radius_of_gyration = compute_radius_of_gyration(add_distance_to_graph(G3), 50, weight_radius_of_gyration)
     print ("Weight" + str(weight_radius_of_gyration))
     print ("Radius of Gyration " + str(radius_of_gyration))
     weighted_radius_of_gyration = weight_radius_of_gyration * radius_of_gyration

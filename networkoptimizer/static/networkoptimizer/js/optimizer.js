@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    console.log("fitness.js: document is ready");
+    console.log("optimizer.js: document is ready");
     $('#networkoptimizer-optimize-route-network-btn').click(function () {
         var numEvolutions = $('#networkoptimizer-number-of-evolutions-field').val();
         var numMutationsPerEvolution = $('#networkoptimizer-number-mutations-per-evolutions-field').val();
