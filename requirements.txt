@@ -24,7 +24,7 @@ geopandas==0.2.1
 geopy==1.11.0
 gevent==1.2.1
 greenlet==0.4.12
-html5lib==0.999
+html5lib==0.99999999
 idna==2.5
 json-tricks==3.8.0
 Landscape-Client==14.12
